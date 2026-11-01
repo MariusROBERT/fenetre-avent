@@ -174,6 +174,18 @@
 						<h2 class="text-lg font-semibold">{selectedDay.registration.name}</h2>
 						<p class="whitespace-pre-wrap text-slate-700">{selectedDay.registration.description}</p>
 						<p class="text-slate-700">{selectedDay.registration.address}</p>
+						<iframe
+							class="h-60 w-full rounded-lg border border-slate-200"
+							title={`Carte de localisation pour ${selectedDay.registration.address}`}
+							loading="lazy"
+							src={`https://www.openstreetmap.org/export/embed.html?bbox=${selectedDay.registration.longitude - 0.005},${selectedDay.registration.latitude - 0.005},${selectedDay.registration.longitude + 0.005},${selectedDay.registration.latitude + 0.005}&layer=mapnik&marker=${selectedDay.registration.latitude},${selectedDay.registration.longitude}`}
+						></iframe>
+						<a
+							class="text-sm underline underline-offset-4"
+							href={`https://www.openstreetmap.org/?mlat=${selectedDay.registration.latitude}&mlon=${selectedDay.registration.longitude}#map=17/${selectedDay.registration.latitude}/${selectedDay.registration.longitude}`}
+							target="_blank"
+							rel="noreferrer">Ouvrir la carte dans OpenStreetMap</a
+						>
 					</div>
 				{:else if selectedDay.state === 'available'}
 					<p class="mt-5 text-slate-700">Cette date est libre. Les inscriptions sont ouvertes.</p>
