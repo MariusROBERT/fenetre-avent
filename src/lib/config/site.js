@@ -6,6 +6,7 @@ export const siteConfig = {
 		name: 'Grenoble',
 		inseeCode: '38185',
 		postalCode: '38000',
+		boundaryGeoJson: 'config/commune.geojson',
 		// Coordinates use [longitude, latitude], matching GeoJSON and MapLibre.
 		mapCenter: [5.9874, 45.2571],
 		mapBounds: [
