@@ -1,4 +1,4 @@
-import { and, eq, gte, lte, ne } from 'drizzle-orm';
+import { and, asc, eq, gte, lte, ne } from 'drizzle-orm';
 import { db } from '#lib/server/db/index.js';
 import { registration } from '#lib/server/db/schema.js';
 
@@ -34,4 +34,20 @@ export function isDateReserved(date) {
 			.limit(1)
 			.get()
 	);
+}
+
+export function getAllConfirmedRegistrations() {
+	return db
+		.select({
+			id: registration.id,
+			date: registration.date,
+			name: registration.name,
+			description: registration.description,
+			address: registration.address,
+			updatedAt: registration.updatedAt
+		})
+		.from(registration)
+		.where(eq(registration.status, 'confirmed'))
+		.orderBy(asc(registration.date))
+		.all();
 }

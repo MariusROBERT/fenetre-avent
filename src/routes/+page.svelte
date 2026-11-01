@@ -11,6 +11,7 @@
 	let selectedTrigger = $state(null);
 
 	let selectedDay = $derived(data.days.find((day) => day.date === selectedDate) ?? null);
+	let copyMessage = $state('');
 
 	const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
 		day: 'numeric',
@@ -37,6 +38,22 @@
 		reserved: 'Réservée',
 		past: 'Passée — libre'
 	};
+
+	$effect(() => {
+		if (data.initialDate) {
+			selectedDate = data.initialDate;
+			dialogOpen = true;
+		}
+	});
+
+	async function copyCalendarUrl() {
+		try {
+			await navigator.clipboard.writeText(data.calendarUrl);
+			copyMessage = 'Lien copié.';
+		} catch {
+			copyMessage = 'Copiez le lien affiché dans le champ.';
+		}
+	}
 </script>
 
 <svelte:head>
@@ -94,6 +111,42 @@
 			>Lire le règlement</a
 		>
 	</p>
+
+	<section class="mt-10 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+		<h2 class="text-xl font-semibold text-slate-900">S’abonner au calendrier</h2>
+		<p class="mt-2 text-slate-700">
+			Ajoutez le flux à votre application pour recevoir les mises à jour. L’importation d’un fichier
+			est ponctuelle et ne se synchronise pas.
+		</p>
+		<ul class="mt-3 list-disc space-y-1 pl-5 text-sm text-slate-700">
+			<li>Google Agenda : « Ajouter un agenda » puis « À partir d’une URL ».</li>
+			<li>Apple Calendrier : « Fichier » puis « Nouvel abonnement au calendrier ».</li>
+			<li>Outlook : « Ajouter un calendrier » puis « S’abonner à partir du Web ».</li>
+		</ul>
+		<label class="mt-4 block text-sm font-medium" for="calendar-url">Lien d’abonnement</label>
+		<div class="mt-1 flex flex-col gap-2 sm:flex-row">
+			<input
+				class="min-w-0 flex-1 rounded-lg border border-slate-300 p-3"
+				id="calendar-url"
+				value={data.calendarUrl}
+				readonly
+			/>
+			<button
+				class="min-h-11 rounded-lg border border-slate-300 px-4 font-medium hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
+				type="button"
+				onclick={copyCalendarUrl}
+			>
+				Copier le lien
+			</button>
+			<a
+				class="inline-flex min-h-11 items-center justify-center rounded-lg bg-emerald-800 px-4 font-medium text-white hover:bg-emerald-900"
+				href={resolve('/calendar.ics')}
+			>
+				Ouvrir le flux
+			</a>
+		</div>
+		<p class="mt-2 text-sm text-slate-600" aria-live="polite">{copyMessage}</p>
+	</section>
 </main>
 
 <Dialog.Root bind:open={dialogOpen}>
@@ -102,8 +155,10 @@
 		<Dialog.Content
 			class="fixed top-1/2 left-1/2 z-50 max-h-[85vh] w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border border-slate-200 bg-white p-6 shadow-xl"
 			onCloseAutoFocus={(event) => {
-				event.preventDefault();
-				selectedTrigger?.focus();
+				if (selectedTrigger) {
+					event.preventDefault();
+					selectedTrigger.focus();
+				}
 			}}
 		>
 			{#if selectedDay}
