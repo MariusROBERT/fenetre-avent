@@ -1,0 +1,236 @@
+<script module>
+	import * as maplibregl from 'maplibre-gl';
+	import maplibreWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
+
+	maplibregl.setWorkerUrl(maplibreWorkerUrl);
+</script>
+
+<script>
+	import { onDestroy } from 'svelte';
+	import { MapLibre, Marker } from 'svelte-maplibre';
+	import { siteConfig } from '#lib/config/site.js';
+
+	/** @typedef {{label: string, longitude: number, latitude: number}} AddressSuggestion */
+
+	/** @type {{address: string, latitude: number, longitude: number}} */
+	let {
+		address = $bindable(''),
+		latitude = $bindable(siteConfig.municipality.mapCenter[1]),
+		longitude = $bindable(siteConfig.municipality.mapCenter[0])
+	} = $props();
+
+	/** @type {[number, number]} */
+	let markerPosition = $state([
+		siteConfig.municipality.mapCenter[0],
+		siteConfig.municipality.mapCenter[1]
+	]);
+	/** @type {AddressSuggestion[]} */
+	let suggestions = $state([]);
+	let loading = $state(false);
+	let searchError = $state('');
+	/** @type {ReturnType<typeof setTimeout> | undefined} */
+	let searchTimer;
+	/** @type {AbortController | null} */
+	let searchController = null;
+
+	/** @type {import('maplibre-gl').StyleSpecification} */
+	const mapStyle = {
+		version: 8,
+		sources: {
+			openStreetMap: {
+				type: 'raster',
+				tiles: [siteConfig.mapTileUrl],
+				tileSize: 256,
+				attribution: siteConfig.mapTileAttribution
+			}
+		},
+		layers: [{ id: 'openStreetMap', type: 'raster', source: 'openStreetMap' }]
+	};
+
+	$effect(() => {
+		longitude = markerPosition[0];
+		latitude = markerPosition[1];
+	});
+
+	/** @param {Event} event */
+	function handleAddressInput(event) {
+		address = /** @type {HTMLInputElement} */ (event.currentTarget).value;
+		clearTimeout(searchTimer);
+		searchController?.abort();
+		suggestions = [];
+		searchError = '';
+
+		const query = address.trim();
+		if (query.length < 3) {
+			loading = false;
+			return;
+		}
+
+		searchTimer = setTimeout(() => void searchAddresses(query), 300);
+	}
+
+	/** @param {string} query */
+	async function searchAddresses(query) {
+		const controller = new AbortController();
+		searchController = controller;
+		loading = true;
+		try {
+			const response = await fetch(`/api/addresses?q=${encodeURIComponent(query)}`, {
+				signal: controller.signal
+			});
+			const result = await response.json();
+			if (!response.ok) throw new Error(result.error);
+			suggestions = result.suggestions;
+		} catch (error) {
+			if (!(error instanceof Error) || error.name !== 'AbortError') {
+				searchError = 'La recherche est indisponible. Vous pouvez saisir l’adresse manuellement.';
+			}
+		} finally {
+			if (searchController === controller) loading = false;
+		}
+	}
+
+	/** @param {AddressSuggestion} suggestion */
+	function selectSuggestion(suggestion) {
+		clearTimeout(searchTimer);
+		searchController?.abort();
+		address = suggestion.label;
+		markerPosition = [suggestion.longitude, suggestion.latitude];
+		suggestions = [];
+		searchError = '';
+		loading = false;
+	}
+
+	function updateMarkerFromInputs() {
+		if (
+			Number.isFinite(longitude) &&
+			Number.isFinite(latitude) &&
+			longitude >= -180 &&
+			longitude <= 180 &&
+			latitude >= -90 &&
+			latitude <= 90
+		) {
+			markerPosition = [longitude, latitude];
+		}
+	}
+
+	onDestroy(() => {
+		clearTimeout(searchTimer);
+		searchController?.abort();
+	});
+</script>
+
+<div class="space-y-4">
+	<div>
+		<label class="mb-1 block font-medium" for="address">Adresse de la fenêtre</label>
+		<input
+			class="w-full rounded-lg border border-slate-300 p-3"
+			id="address"
+			name="address"
+			bind:value={address}
+			autocomplete="street-address"
+			aria-autocomplete="list"
+			aria-controls="address-suggestions"
+			aria-expanded={suggestions.length > 0}
+			oninput={handleAddressInput}
+			required
+		/>
+		{#if loading}
+			<p class="mt-1 text-sm text-slate-600" aria-live="polite">Recherche d’adresses…</p>
+		{/if}
+		{#if searchError}
+			<p class="mt-1 text-sm text-red-700" role="status">{searchError}</p>
+		{/if}
+		{#if suggestions.length}
+			<ul
+				id="address-suggestions"
+				class="mt-1 rounded-lg border border-slate-300 bg-white shadow-sm"
+			>
+				{#each suggestions as suggestion (suggestion.label)}
+					<li>
+						<button
+							class="w-full px-3 py-2 text-left hover:bg-slate-100 focus-visible:bg-slate-100"
+							type="button"
+							onclick={() => selectSuggestion(suggestion)}
+						>
+							{suggestion.label}
+						</button>
+					</li>
+				{/each}
+			</ul>
+		{:else if address.trim().length >= 3 && !loading && !searchError}
+			<p class="mt-1 text-sm text-slate-600" role="status">
+				Aucune suggestion trouvée. Vous pouvez garder votre saisie et placer le marqueur
+				manuellement.
+			</p>
+		{/if}
+	</div>
+
+	<div>
+		<p class="mb-2 text-sm text-slate-700">
+			Déplacez le marqueur jusqu’à l’emplacement de la fenêtre. Vous pouvez aussi ajuster les
+			coordonnées ci-dessous.
+		</p>
+		<div class="h-80 overflow-hidden rounded-lg border border-slate-300">
+			<MapLibre
+				center={siteConfig.municipality.mapCenter}
+				zoom={15}
+				minZoom={11}
+				maxZoom={19}
+				maxBounds={siteConfig.municipality.mapBounds}
+				cooperativeGestures
+				standardControls
+				style={mapStyle}
+				class="h-full w-full"
+			>
+				<Marker bind:lngLat={markerPosition} draggable>
+					<span
+						class="grid size-8 place-items-center rounded-full border-2 border-white bg-emerald-800 text-lg text-white shadow-md"
+					>
+						<span aria-hidden="true">●</span>
+					</span>
+				</Marker>
+			</MapLibre>
+		</div>
+	</div>
+
+	<fieldset class="grid gap-4 sm:grid-cols-2">
+		<legend class="mb-2 font-medium">Coordonnées GPS</legend>
+		<div>
+			<label class="mb-1 block" for="latitude">Latitude</label>
+			<input
+				class="w-full rounded-lg border border-slate-300 p-3"
+				id="latitude"
+				name="latitude"
+				type="number"
+				step="any"
+				min="-90"
+				max="90"
+				value={latitude}
+				oninput={(event) => {
+					latitude = /** @type {HTMLInputElement} */ (event.currentTarget).valueAsNumber;
+					updateMarkerFromInputs();
+				}}
+				required
+			/>
+		</div>
+		<div>
+			<label class="mb-1 block" for="longitude">Longitude</label>
+			<input
+				class="w-full rounded-lg border border-slate-300 p-3"
+				id="longitude"
+				name="longitude"
+				type="number"
+				step="any"
+				min="-180"
+				max="180"
+				value={longitude}
+				oninput={(event) => {
+					longitude = /** @type {HTMLInputElement} */ (event.currentTarget).valueAsNumber;
+					updateMarkerFromInputs();
+				}}
+				required
+			/>
+		</div>
+	</fieldset>
+</div>

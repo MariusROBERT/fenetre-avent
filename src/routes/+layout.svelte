@@ -1,5 +1,6 @@
 <script>
 	import './layout.css';
+	import 'maplibre-gl/dist/maplibre-gl.css';
 	import favicon from '#lib/assets/favicon.svg';
 	import { siteConfig } from '#lib/config/site.js';
 

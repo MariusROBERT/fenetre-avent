@@ -1,6 +1,7 @@
 <script>
 	import { resolve } from '$app/paths';
 	import RulesContent from '#lib/components/RulesContent.svelte';
+	import LocationPicker from '#lib/components/LocationPicker.svelte';
 	import { siteConfig } from '#lib/config/site.js';
 	import { registrationInputFromFormData, registrationSchema } from '#lib/schemas/registration.js';
 
@@ -8,6 +9,9 @@
 	let { data, form } = $props();
 	/** @type {string[]} */
 	let clientErrors = $state([]);
+	let address = $state('');
+	let latitude = $state(siteConfig.municipality.mapCenter[1]);
+	let longitude = $state(siteConfig.municipality.mapCenter[0]);
 
 	/** @param {SubmitEvent & {currentTarget: HTMLFormElement}} event */
 	function validateForm(event) {
@@ -130,50 +134,7 @@
 					maxlength="1000"></textarea>
 			</div>
 
-			<div>
-				<label class="mb-1 block font-medium" for="address">Adresse de la fenêtre</label>
-				<input
-					class="w-full rounded-lg border border-slate-300 p-3"
-					id="address"
-					name="address"
-					required
-					autocomplete="street-address"
-				/>
-			</div>
-
-			<fieldset class="grid gap-4 sm:grid-cols-2">
-				<legend class="mb-2 font-medium">Position GPS de la fenêtre</legend>
-				<div>
-					<label class="mb-1 block" for="latitude">Latitude</label>
-					<input
-						class="w-full rounded-lg border border-slate-300 p-3"
-						id="latitude"
-						name="latitude"
-						type="number"
-						step="any"
-						min="-90"
-						max="90"
-						required
-					/>
-				</div>
-				<div>
-					<label class="mb-1 block" for="longitude">Longitude</label>
-					<input
-						class="w-full rounded-lg border border-slate-300 p-3"
-						id="longitude"
-						name="longitude"
-						type="number"
-						step="any"
-						min="-180"
-						max="180"
-						required
-					/>
-				</div>
-				<p class="text-sm text-slate-600 sm:col-span-2">
-					Centre indicatif : {data.mapCenter[1]}, {data.mapCenter[0]}. Une carte interactive sera
-					disponible pour ajuster le point.
-				</p>
-			</fieldset>
+			<LocationPicker bind:address bind:latitude bind:longitude />
 
 			<div class="rounded-lg bg-slate-50 p-4">
 				<RulesContent content={data.rulesHtml} />

@@ -26,8 +26,7 @@ export async function load({ params }) {
 				? 'La date est passée, les inscriptions sont closes.'
 				: null,
 		rulesHtml: await marked.parse(rulesMarkdown),
-		rulesVersion: siteConfig.rulesVersion,
-		mapCenter: siteConfig.municipality.mapCenter
+		rulesVersion: siteConfig.rulesVersion
 	};
 }
 
