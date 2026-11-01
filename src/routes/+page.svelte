@@ -1,2 +1,143 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<script>
+	import { resolve } from '$app/paths';
+	import { Dialog } from 'bits-ui';
+	import { siteConfig } from '#lib/config/site.js';
+
+	/** @type {{data: import('./$types').PageData}} */
+	let { data } = $props();
+	let dialogOpen = $state(false);
+	let selectedDate = $state('');
+	/** @type {HTMLButtonElement | null} */
+	let selectedTrigger = $state(null);
+
+	let selectedDay = $derived(data.days.find((day) => day.date === selectedDate) ?? null);
+
+	const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
+		day: 'numeric',
+		month: 'long',
+		year: 'numeric',
+		timeZone: 'Europe/Paris'
+	});
+
+	/** @param {string} date */
+	function formatDate(date) {
+		return dateFormatter.format(new Date(`${date}T12:00:00Z`));
+	}
+
+	/** @param {typeof data.days[number]} day @param {MouseEvent} event */
+	function openDay(day, event) {
+		selectedDate = day.date;
+		selectedTrigger = /** @type {HTMLButtonElement} */ (event.currentTarget);
+		dialogOpen = true;
+	}
+
+	/** @type {Record<string, string>} */
+	const stateLabels = {
+		available: 'Disponible',
+		reserved: 'Réservée',
+		past: 'Passée — libre'
+	};
+</script>
+
+<svelte:head>
+	<meta
+		name="description"
+		content={`Calendrier des fenêtres de l’Avent ${data.year} — ${siteConfig.municipality.name}.`}
+	/>
+</svelte:head>
+
+<main class="mx-auto min-h-screen max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+	<header class="mb-8 text-center">
+		<p class="font-medium text-emerald-800">{siteConfig.municipality.name}</p>
+		<h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+			Fenêtres de l’Avent {data.year}
+		</h1>
+		<p class="mx-auto mt-3 max-w-2xl text-slate-600">
+			Découvrez les fenêtres décorées du 1<sup>er</sup> au 24 décembre, ou choisissez une date libre pour
+			participer.
+		</p>
+	</header>
+
+	<ul
+		class="mb-5 flex list-none flex-wrap justify-center gap-x-5 gap-y-2 p-0 text-sm text-slate-700"
+		aria-label="Légende des dates"
+	>
+		<li><span aria-hidden="true">●</span> Disponible</li>
+		<li><span aria-hidden="true">●</span> Réservée</li>
+		<li><span aria-hidden="true">●</span> Passée — libre</li>
+	</ul>
+
+	<section aria-label={`Calendrier de l’Avent ${data.year}`}>
+		<div class="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+			{#each data.days as day (day.date)}
+				<button
+					type="button"
+					class="min-h-28 rounded-xl border p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 {day.state ===
+					'available'
+						? 'border-emerald-300 bg-emerald-50'
+						: day.state === 'reserved'
+							? 'border-amber-300 bg-amber-50'
+							: 'border-slate-200 bg-slate-100'}"
+					aria-label={`${formatDate(day.date)}, ${stateLabels[day.state]}`}
+					onclick={(event) => openDay(day, event)}
+				>
+					<span class="block text-2xl font-bold text-slate-900">{Number(day.date.slice(-2))}</span>
+					<span class="mt-2 block text-sm font-medium text-slate-700">{stateLabels[day.state]}</span
+					>
+				</button>
+			{/each}
+		</div>
+	</section>
+
+	<p class="mt-8 text-center text-sm text-slate-600">
+		<a class="underline underline-offset-4 hover:text-emerald-800" href={resolve('/rules')}
+			>Lire le règlement</a
+		>
+	</p>
+</main>
+
+<Dialog.Root bind:open={dialogOpen}>
+	<Dialog.Portal>
+		<Dialog.Overlay class="fixed inset-0 z-40 bg-slate-950/50" />
+		<Dialog.Content
+			class="fixed top-1/2 left-1/2 z-50 max-h-[85vh] w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border border-slate-200 bg-white p-6 shadow-xl"
+			onCloseAutoFocus={(event) => {
+				event.preventDefault();
+				selectedTrigger?.focus();
+			}}
+		>
+			{#if selectedDay}
+				<Dialog.Title class="text-xl font-semibold text-slate-900">
+					{formatDate(selectedDay.date)}
+				</Dialog.Title>
+				<Dialog.Description class="mt-1 text-sm text-slate-600">
+					{stateLabels[selectedDay.state]}
+				</Dialog.Description>
+
+				{#if selectedDay.registration}
+					<div class="mt-5 space-y-3">
+						<h2 class="text-lg font-semibold">{selectedDay.registration.name}</h2>
+						<p class="whitespace-pre-wrap text-slate-700">{selectedDay.registration.description}</p>
+						<p class="text-slate-700">{selectedDay.registration.address}</p>
+					</div>
+				{:else if selectedDay.state === 'available'}
+					<p class="mt-5 text-slate-700">Cette date est libre. Les inscriptions sont ouvertes.</p>
+					<a
+						class="mt-5 inline-flex min-h-11 items-center rounded-lg bg-emerald-800 px-5 font-semibold text-white hover:bg-emerald-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
+						href={resolve('/register/[date]', { date: selectedDay.date })}
+					>
+						S’inscrire
+					</a>
+				{:else}
+					<p class="mt-5 text-slate-700">Aucune fenêtre n’a été inscrite pour cette date.</p>
+				{/if}
+
+				<Dialog.Close
+					class="ml-3 inline-flex min-h-11 items-center rounded-lg border border-slate-300 px-4 font-medium hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
+				>
+					Fermer
+				</Dialog.Close>
+			{/if}
+		</Dialog.Content>
+	</Dialog.Portal>
+</Dialog.Root>
