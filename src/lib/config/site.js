@@ -15,7 +15,5 @@ export const siteConfig = {
 			[5.753078, 45.214319]
 		])
 	},
-	mapTileUrl: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-	mapTileAttribution:
-		'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+	mapStyle: 'https://styles.maptoolkit.org/winter.json'
 };

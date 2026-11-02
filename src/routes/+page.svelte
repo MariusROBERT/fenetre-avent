@@ -1,5 +1,13 @@
+<script module>
+	import * as maplibregl from 'maplibre-gl';
+	import maplibreWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
+
+	maplibregl.setWorkerUrl(maplibreWorkerUrl);
+</script>
+
 <script>
 	import { resolve } from '$app/paths';
+	import { MapLibre, Marker } from 'svelte-maplibre';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import { Dialog } from '#lib/components/ui/dialog/index.js';
 	import { Input } from '#lib/components/ui/input/index.js';
@@ -93,9 +101,9 @@
 		class="mb-5 flex list-none flex-wrap justify-center gap-x-5 gap-y-2 p-0 text-sm text-slate-700"
 		aria-label="Légende des dates"
 	>
-		<li><span aria-hidden="true">●</span> Disponible</li>
-		<li><span aria-hidden="true">●</span> Réservée</li>
-		<li><span aria-hidden="true">●</span> Passée — libre</li>
+		<li><span aria-hidden="true" class="text-green-700">●</span> Disponible</li>
+		<li><span aria-hidden="true" class="text-amber-700">●</span> Réservée</li>
+		<li><span aria-hidden="true" class="text-slate-500">●</span> Passée</li>
 	</ul>
 
 	<section aria-label={`Calendrier de l’Avent ${data.year}`}>
@@ -183,12 +191,33 @@
 						<h2 class="text-lg font-semibold">{selectedDay.registration.name}</h2>
 						<p class="whitespace-pre-wrap text-slate-700">{selectedDay.registration.description}</p>
 						<p class="text-slate-700">{selectedDay.registration.address}</p>
-						<iframe
-							class="h-60 w-full rounded-lg border border-slate-200"
-							title={`Carte de localisation pour ${selectedDay.registration.address}`}
-							loading="lazy"
-							src={`https://www.openstreetmap.org/export/embed.html?bbox=${selectedDay.registration.longitude - 0.005},${selectedDay.registration.latitude - 0.005},${selectedDay.registration.longitude + 0.005},${selectedDay.registration.latitude + 0.005}&layer=mapnik&marker=${selectedDay.registration.latitude},${selectedDay.registration.longitude}`}
-						></iframe>
+						<div
+							class="h-60 w-full overflow-hidden rounded-lg border border-slate-200"
+							role="region"
+							aria-label={`Carte de localisation pour ${selectedDay.registration.address}`}
+						>
+							<MapLibre
+								center={[selectedDay.registration.longitude, selectedDay.registration.latitude]}
+								zoom={15}
+								minZoom={11}
+								maxZoom={19}
+								maxBounds={siteConfig.municipality.mapBounds}
+								cooperativeGestures
+								standardControls
+								style={siteConfig.mapStyle}
+								class="h-full w-full"
+							>
+								<Marker
+									lngLat={[selectedDay.registration.longitude, selectedDay.registration.latitude]}
+								>
+									<span
+										class="grid size-8 place-items-center rounded-full border-2 border-white bg-emerald-800 text-lg text-white shadow-md"
+									>
+										<span aria-hidden="true">●</span>
+									</span>
+								</Marker>
+							</MapLibre>
+						</div>
 						<a
 							class="text-sm underline underline-offset-4"
 							href={`https://www.openstreetmap.org/?mlat=${selectedDay.registration.latitude}&mlon=${selectedDay.registration.longitude}#map=17/${selectedDay.registration.latitude}/${selectedDay.registration.longitude}`}

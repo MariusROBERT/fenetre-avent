@@ -42,20 +42,6 @@
 	/** @type {AbortController | null} */
 	let searchController = null;
 
-	/** @type {import('maplibre-gl').StyleSpecification} */
-	const mapStyle = {
-		version: 8,
-		sources: {
-			openStreetMap: {
-				type: 'raster',
-				tiles: [siteConfig.mapTileUrl],
-				tileSize: 256,
-				attribution: siteConfig.mapTileAttribution
-			}
-		},
-		layers: [{ id: 'openStreetMap', type: 'raster', source: 'openStreetMap' }]
-	};
-
 	$effect(() => {
 		longitude = markerPosition[0];
 		latitude = markerPosition[1];
@@ -213,7 +199,7 @@
 				maxBounds={siteConfig.municipality.mapBounds}
 				cooperativeGestures
 				standardControls
-				style={mapStyle}
+				style={siteConfig.mapStyle}
 				class="h-full w-full"
 			>
 				<Marker bind:lngLat={markerPosition} draggable>
