@@ -56,9 +56,9 @@
 	};
 	/** @type {Record<string, string>} */
 	const stateClasses = {
-		available: 'border-green-700 bg-green-100 hover:bg-green-100',
-		reserved: 'border-amber-700 bg-amber-100 hover:bg-amber-100',
-		past: 'border-slate-500 bg-slate-200 hover:bg-slate-200'
+		available: 'border-[#91B99D] bg-[#DAE8D8] hover:bg-[#DAE8D8]',
+		reserved: 'border-[#D6B56E] bg-[#FFF1CC] hover:bg-[#FFF1CC]',
+		past: 'border-[#A5B6AA] bg-[#E6EDE4] hover:bg-[#E6EDE4]'
 	};
 
 	$effect(() => {
@@ -85,66 +85,79 @@
 	/>
 </svelte:head>
 
-<main class="mx-auto min-h-screen max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+<div class="pointer-events-none fixed inset-0 z-0 overflow-hidden select-none" aria-hidden="true">
+	<span class="absolute top-[17%] left-[5%] hidden text-3xl text-[#D6B56E]/20 sm:block">✦</span>
+	<span class="absolute top-[34%] right-[6%] hidden text-4xl text-[#DAE8D8]/15 sm:block">❄</span>
+	<span class="absolute bottom-[24%] left-[8%] hidden text-2xl text-[#DAE8D8]/15 sm:block">❄</span>
+	<span class="absolute right-[10%] bottom-[12%] hidden text-2xl text-[#D6B56E]/20 sm:block">✦</span
+	>
+</div>
+
+<main class="relative z-10 mx-auto min-h-screen max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
 	<header class="mb-8 text-center">
-		<p class="font-medium text-emerald-800">{siteConfig.municipality.name}</p>
-		<h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+		<p class="font-medium text-[#D6B56E]">{siteConfig.municipality.name}</p>
+		<h1 class="mt-2 text-3xl font-bold tracking-tight text-[#FFF4DB] sm:text-4xl">
 			Fenêtres de l’Avent {data.year}
 		</h1>
-		<p class="mx-auto mt-3 max-w-2xl text-slate-600">
+		<p class="mx-auto mt-3 max-w-2xl text-[#DAE8D8]">
 			Découvrez les fenêtres décorées du 1<sup>er</sup> au 24 décembre, ou choisissez une date libre pour
 			participer.
 		</p>
 	</header>
 
 	<ul
-		class="mb-5 flex list-none flex-wrap justify-center gap-x-5 gap-y-2 p-0 text-sm text-slate-700"
+		class="mb-5 flex list-none flex-wrap justify-center gap-x-5 gap-y-2 p-0 text-sm text-[#DAE8D8]"
 		aria-label="Légende des dates"
 	>
-		<li><span aria-hidden="true" class="text-green-700">●</span> Disponible</li>
-		<li><span aria-hidden="true" class="text-amber-700">●</span> Réservée</li>
-		<li><span aria-hidden="true" class="text-slate-500">●</span> Passée</li>
+		<li><span aria-hidden="true" class="text-[#B7D8C1]">●</span> Disponible</li>
+		<li><span aria-hidden="true" class="text-[#D6B56E]">●</span> Réservée</li>
+		<li><span aria-hidden="true" class="text-[#DAE8D8]">●</span> Passée</li>
 	</ul>
 
-		<section aria-label={`Calendrier de l’Avent ${data.year}`}>
-			<div class="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
-				{#each data.days as day (day.date)}
-					<Button
-						type="button"
-						variant="ghost"
-						class={`min-h-28 rounded-xl border-2 p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:brightness-80 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 dark:hover:brightness-80 ${stateClasses[day.state]}`}
-						aria-label={`${formatDate(day.date)}, ${stateLabels[day.state]}`}
-						onclick={openDayHandler(day)}
+	<section aria-label={`Calendrier de l’Avent ${data.year}`}>
+		<div class="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+			{#each data.days as day (day.date)}
+				<Button
+					type="button"
+					variant="ghost"
+					class={`min-h-28 rounded-xl border-2 p-4 text-left shadow-md shadow-[#0A2B24]/15 transition hover:-translate-y-0.5 hover:shadow-lg hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D6B56E] dark:hover:brightness-95 ${stateClasses[day.state]}`}
+					aria-label={`${formatDate(day.date)}, ${stateLabels[day.state]}`}
+					onclick={openDayHandler(day)}
+				>
+					<span class="block text-2xl font-bold text-[#153D33]">{Number(day.date.slice(-2))}</span>
+					<span class="mt-2 block text-sm font-medium text-[#153D33]">{stateLabels[day.state]}</span
 					>
-						<span class="block text-2xl font-bold text-slate-900">{Number(day.date.slice(-2))}</span>
-						<span class="mt-2 block text-sm font-medium text-slate-700">{stateLabels[day.state]}</span
-						>
-					</Button>
-				{/each}
-			</div>
-		</section>
+				</Button>
+			{/each}
+		</div>
+	</section>
 
-	<p class="mt-8 text-center text-sm text-slate-600">
-		<a class="underline underline-offset-4 hover:text-emerald-800" href={resolve('/rules')}
-			>Lire le règlement</a
+	<p class="mt-8 text-center text-sm text-[#DAE8D8]">
+		<a
+			class="text-[#D6B56E] underline underline-offset-4 hover:text-[#FFF4DB]"
+			href={resolve('/rules')}>Lire le règlement</a
 		>
 	</p>
 
-	<section class="mt-10 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-		<h2 class="text-xl font-semibold text-slate-900">S’abonner au calendrier</h2>
-		<p class="mt-2 text-slate-700">
+	<section
+		class="mt-10 rounded-xl border border-[#D6B56E]/50 bg-[#FFF9ED] p-5 text-[#153D33] shadow-lg shadow-[#0A2B24]/20"
+	>
+		<h2 class="text-xl font-semibold text-[#153D33]">S’abonner au calendrier</h2>
+		<p class="mt-2 text-[#455F54]">
 			Ajoutez le flux à votre application pour recevoir les mises à jour. L’importation d’un fichier
 			est ponctuelle et ne se synchronise pas.
 		</p>
-		<ul class="mt-3 list-disc space-y-1 pl-5 text-sm text-slate-700">
+		<ul class="mt-3 list-disc space-y-1 pl-5 text-sm text-[#455F54]">
 			<li>Google Agenda : « Ajouter un agenda » puis « À partir d’une URL ».</li>
 			<li>Apple Calendrier : « Fichier » puis « Nouvel abonnement au calendrier ».</li>
 			<li>Outlook : « Ajouter un calendrier » puis « S’abonner à partir du Web ».</li>
 		</ul>
-		<Label class="mt-4 block text-sm font-medium" for="calendar-url">Lien d’abonnement</Label>
+		<Label class="mt-4 block text-sm font-medium text-[#153D33]" for="calendar-url"
+			>Lien d’abonnement</Label
+		>
 		<div class="mt-1 flex flex-col gap-2 sm:flex-row">
 			<Input
-				class="h-12 min-w-0 flex-1 rounded-lg p-3"
+				class="h-12 min-w-0 flex-1 rounded-lg bg-white p-3 text-[#153D33]"
 				id="calendar-url"
 				type="url"
 				value={data.calendarUrl}
@@ -152,7 +165,7 @@
 			/>
 			<Button
 				variant="outline"
-				class="min-h-11 rounded-lg border-slate-300 px-4 font-medium hover:bg-slate-50"
+				class="min-h-11 rounded-lg border-[#718D81] bg-[#153D33] px-4 font-medium text-[#FFF4DB] hover:bg-[#21483D] dark:bg-[#153D33] dark:hover:bg-[#21483D]"
 				type="button"
 				onclick={copyCalendarUrl}
 			>
@@ -162,7 +175,7 @@
 				Ouvrir le flux
 			</Button>
 		</div>
-		<p class="mt-2 text-sm text-slate-600" aria-live="polite">{copyMessage}</p>
+		<p class="mt-2 text-sm text-[#455F54]" aria-live="polite">{copyMessage}</p>
 	</section>
 </main>
 
@@ -170,7 +183,7 @@
 	<Dialog.Portal>
 		<Dialog.Overlay class="fixed inset-0 z-40 bg-slate-950/50" />
 		<Dialog.Content
-			class="fixed top-1/2 left-1/2 z-50 max-h-[85vh] w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border border-slate-200 bg-white p-6 shadow-xl"
+			class="fixed top-1/2 left-1/2 z-50 max-h-[85vh] w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border border-[#D6B56E]/50 bg-[#FFF9ED] p-6 text-[#153D33] shadow-xl"
 			onCloseAutoFocus={(event) => {
 				if (selectedTrigger) {
 					event.preventDefault();
