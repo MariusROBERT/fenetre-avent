@@ -56,9 +56,9 @@
 	};
 	/** @type {Record<string, string>} */
 	const stateClasses = {
-		available: 'border-green-700 bg-green-100',
-		reserved: 'border-amber-700 bg-amber-100',
-		past: 'border-slate-500 bg-slate-200'
+		available: 'border-green-700 bg-green-100 hover:bg-green-100',
+		reserved: 'border-amber-700 bg-amber-100 hover:bg-amber-100',
+		past: 'border-slate-500 bg-slate-200 hover:bg-slate-200'
 	};
 
 	$effect(() => {
@@ -112,7 +112,7 @@
 					<Button
 						type="button"
 						variant="ghost"
-						class={`min-h-28 rounded-xl border-2 p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:bg-white hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 dark:hover:bg-white ${stateClasses[day.state]}`}
+						class={`min-h-28 rounded-xl border-2 p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:brightness-80 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 dark:hover:brightness-80 ${stateClasses[day.state]}`}
 						aria-label={`${formatDate(day.date)}, ${stateLabels[day.state]}`}
 						onclick={openDayHandler(day)}
 					>
