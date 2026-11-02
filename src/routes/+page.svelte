@@ -106,23 +106,23 @@
 		<li><span aria-hidden="true" class="text-slate-500">●</span> Passée</li>
 	</ul>
 
-	<section aria-label={`Calendrier de l’Avent ${data.year}`}>
-		<div class="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
-			{#each data.days as day (day.date)}
-				<Button
-					type="button"
-					variant="ghost"
-					class={`min-h-28 rounded-xl border-2 p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:bg-transparent hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 dark:hover:bg-transparent ${stateClasses[day.state]}`}
-					aria-label={`${formatDate(day.date)}, ${stateLabels[day.state]}`}
-					onclick={openDayHandler(day)}
-				>
-					<span class="block text-2xl font-bold text-slate-900">{Number(day.date.slice(-2))}</span>
-					<span class="mt-2 block text-sm font-medium text-slate-700">{stateLabels[day.state]}</span
+		<section aria-label={`Calendrier de l’Avent ${data.year}`}>
+			<div class="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+				{#each data.days as day (day.date)}
+					<Button
+						type="button"
+						variant="ghost"
+						class={`min-h-28 rounded-xl border-2 p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:bg-white hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 dark:hover:bg-white ${stateClasses[day.state]}`}
+						aria-label={`${formatDate(day.date)}, ${stateLabels[day.state]}`}
+						onclick={openDayHandler(day)}
 					>
-				</Button>
-			{/each}
-		</div>
-	</section>
+						<span class="block text-2xl font-bold text-slate-900">{Number(day.date.slice(-2))}</span>
+						<span class="mt-2 block text-sm font-medium text-slate-700">{stateLabels[day.state]}</span
+						>
+					</Button>
+				{/each}
+			</div>
+		</section>
 
 	<p class="mt-8 text-center text-sm text-slate-600">
 		<a class="underline underline-offset-4 hover:text-emerald-800" href={resolve('/rules')}
