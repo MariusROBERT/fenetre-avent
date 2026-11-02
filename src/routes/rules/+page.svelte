@@ -7,22 +7,31 @@
 </script>
 
 <main class="mx-auto max-w-3xl px-4 py-10 sm:px-6">
-	<a class="text-sm underline underline-offset-4" href={resolve('/')}>Retour au calendrier</a>
+	<a
+		class="text-sm text-[#D6B56E] underline underline-offset-4 hover:text-[#FFF4DB]"
+		href={resolve('/')}>Retour au calendrier</a
+	>
 	<article class="rules mt-8">
 		<SvelteMarkdownEditor markdown={data.rulesMarkdown} editable={false} bare />
 	</article>
-	<p class="mt-8 text-sm text-slate-500">Version du règlement : {data.rulesVersion}</p>
+	<p class="mt-8 text-sm text-[#DAE8D8]">Version du règlement : {data.rulesVersion}</p>
 </main>
 
 <style>
 	.rules {
-		--md-fg: #0f172a;
-		--md-h1: #0f172a;
-		--md-h2: #0f172a;
-		--md-h3: #0f172a;
-		--md-strong: #0f172a;
-		--md-em: #166534;
-		--md-muted: #475569;
+		--md-bg: transparent;
+		--md-fg: #fff4db;
+		--md-h1: #fff4db;
+		--md-h2: #fff4db;
+		--md-h3: #fff4db;
+		--md-strong: #fff4db;
+		--md-em: #d6b56e;
+		--md-muted: #dae8d8;
+		--md-code-bg: #102e27;
+		--md-code-fg: #f2dfae;
+		--md-blockquote-bg: #21483d;
+		--md-blockquote-fg: #dae8d8;
+		--md-blockquote-border: #d6b56e;
 	}
 
 	.rules :global(h1) {

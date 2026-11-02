@@ -125,7 +125,7 @@
 		<Label class="mb-1 block font-medium" for="address">Adresse de la fenêtre</Label>
 		<div class="flex gap-2">
 			<Input
-				class="h-12 min-w-0 flex-1 rounded-lg border-slate-300 p-3"
+				class="h-12 min-w-0 flex-1 rounded-lg border-[#DAE8D8]/70 p-3"
 				id="address"
 				name="address"
 				type="text"
@@ -141,7 +141,7 @@
 			/>
 			<Button
 				variant="outline"
-				class="h-11 shrink-0 rounded-lg border-slate-300 px-3 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50"
+				class="h-11 shrink-0 rounded-lg border-[#DAE8D8]/70 px-3 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50"
 				type="button"
 				aria-label="Recentrer la carte sur les coordonnées GPS"
 				disabled={!Number.isFinite(longitude) || !Number.isFinite(latitude)}
@@ -149,26 +149,26 @@
 			>
 		</div>
 		{#if errors.address?.[0]}
-			<p class="mt-1 text-sm text-red-700" id="address-error" aria-live="polite">
+			<p class="mt-1 text-sm text-[#F3ADB3]" id="address-error" aria-live="polite">
 				{errors.address[0]}
 			</p>
 		{/if}
 		{#if loading}
-			<p class="mt-1 text-sm text-slate-600" aria-live="polite">Recherche d’adresses…</p>
+			<p class="mt-1 text-sm text-[#DAE8D8]" aria-live="polite">Recherche d’adresses…</p>
 		{/if}
 		{#if searchError}
-			<p class="mt-1 text-sm text-red-700" role="status">{searchError}</p>
+			<p class="mt-1 text-sm text-[#F3ADB3]" role="status">{searchError}</p>
 		{/if}
 		{#if suggestions.length}
 			<ul
 				id="address-suggestions"
-				class="mt-1 rounded-lg border border-slate-300 bg-white shadow-sm"
+				class="mt-1 rounded-lg border border-[#D6B56E]/70 bg-[#FFF9ED] text-[#153D33] shadow-sm"
 			>
 				{#each suggestions as suggestion (suggestion.label)}
 					<li>
 						<Button
 							variant="ghost"
-							class="h-auto w-full justify-start px-3 py-2 text-left"
+							class="h-auto w-full justify-start px-3 py-2 text-left hover:bg-[#DAE8D8] hover:text-[#153D33] dark:hover:bg-[#DAE8D8]"
 							type="button"
 							onclick={() => selectSuggestion(suggestion)}
 						>
@@ -178,7 +178,7 @@
 				{/each}
 			</ul>
 		{:else if address.trim().length >= 3 && !loading && !searchError}
-			<p class="mt-1 text-sm text-slate-600" role="status">
+			<p class="mt-1 text-sm text-[#DAE8D8]" role="status">
 				Aucune suggestion trouvée. Vous pouvez garder votre saisie et placer le marqueur
 				manuellement.
 			</p>
@@ -186,11 +186,11 @@
 	</div>
 
 	<div>
-		<p class="mb-2 text-sm text-slate-700">
+		<p class="mb-2 text-sm text-[#DAE8D8]">
 			Déplacez le marqueur jusqu’à l’emplacement de la fenêtre. Vous pouvez aussi ajuster les
 			coordonnées ci-dessous.
 		</p>
-		<div class="h-80 overflow-hidden rounded-lg border border-slate-300">
+		<div class="h-80 overflow-hidden rounded-lg border border-[#DAE8D8]/70">
 			<MapLibre
 				bind:center={mapCenter}
 				zoom={15}
@@ -218,7 +218,7 @@
 		<div>
 			<Label class="mb-1 block" for="latitude">Latitude</Label>
 			<Input
-				class="h-12 w-full rounded-lg border-slate-300 p-3"
+				class="h-12 w-full rounded-lg border-[#DAE8D8]/70 p-3"
 				id="latitude"
 				name="latitude"
 				aria-invalid={Boolean(errors.latitude?.[0])}
@@ -235,7 +235,7 @@
 				required
 			/>
 			{#if errors.latitude?.[0]}
-				<p class="mt-1 text-sm text-red-700" id="latitude-error" aria-live="polite">
+				<p class="mt-1 text-sm text-[#F3ADB3]" id="latitude-error" aria-live="polite">
 					{errors.latitude[0]}
 				</p>
 			{/if}
@@ -243,7 +243,7 @@
 		<div>
 			<Label class="mb-1 block" for="longitude">Longitude</Label>
 			<Input
-				class="h-12 w-full rounded-lg border-slate-300 p-3"
+				class="h-12 w-full rounded-lg border-[#DAE8D8]/70 p-3"
 				id="longitude"
 				name="longitude"
 				aria-invalid={Boolean(errors.longitude?.[0])}
@@ -260,7 +260,7 @@
 				required
 			/>
 			{#if errors.longitude?.[0]}
-				<p class="mt-1 text-sm text-red-700" id="longitude-error" aria-live="polite">
+				<p class="mt-1 text-sm text-[#F3ADB3]" id="longitude-error" aria-live="polite">
 					{errors.longitude[0]}
 				</p>
 			{/if}

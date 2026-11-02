@@ -109,12 +109,18 @@
 	<title>Inscription — {siteConfig.name}</title>
 </svelte:head>
 
-<main class="mx-auto max-w-2xl px-4 py-10 sm:px-6">
-	<a class="text-sm underline underline-offset-4" href={resolve('/')}>Retour au calendrier</a>
+<main class="mx-auto max-w-2xl px-4 py-10 text-[#FFF4DB] sm:px-6">
+	<a
+		class="text-sm text-[#D6B56E] underline underline-offset-4 hover:text-[#FFF4DB]"
+		href={resolve('/')}>Retour au calendrier</a
+	>
 	<h1 class="mt-6 text-3xl font-bold">Inscription pour le {data.date}</h1>
 
 	{#if form?.success && form.confirmation}
-		<section class="mt-6 rounded-xl border border-emerald-300 bg-emerald-50 p-5" aria-live="polite">
+		<section
+			class="mt-6 rounded-xl border border-[#91B99D] bg-[#DAE8D8] p-5 text-[#153D33]"
+			aria-live="polite"
+		>
 			<h2 class="text-xl font-semibold">Votre fenêtre est inscrite</h2>
 			<p class="mt-2">La date du {form.confirmation.date} est réservée.</p>
 			<dl class="mt-4 space-y-2">
@@ -133,15 +139,20 @@
 			</dl>
 		</section>
 	{:else if !data.available}
-		<p class="mt-6 rounded-lg bg-slate-100 p-4" role="status">{data.unavailableMessage}</p>
+		<p class="mt-6 rounded-lg bg-[#DAE8D8] p-4 text-[#153D33]" role="status">
+			{data.unavailableMessage}
+		</p>
 	{:else}
-		<p class="mt-3 text-slate-700">
+		<p class="mt-3 text-[#DAE8D8]">
 			Les informations publiques ci-dessous seront affichées dans le calendrier. Vos coordonnées de
 			contact resteront privées.
 		</p>
 
 		{#if form?.message}
-			<div class="mt-5 rounded-lg border border-red-300 bg-red-50 p-4" role="alert">
+			<div
+				class="mt-5 rounded-lg border border-[#D6B56E] bg-[#FFF1CC] p-4 text-[#153D33]"
+				role="alert"
+			>
 				<p>{form.message}</p>
 				{#if form.errors.length}
 					<ul class="mt-2 list-disc pl-5">
@@ -153,7 +164,10 @@
 			</div>
 		{/if}
 		{#if clientErrors.length}
-			<div class="mt-5 rounded-lg border border-red-300 bg-red-50 p-4" role="alert">
+			<div
+				class="mt-5 rounded-lg border border-[#D6B56E] bg-[#FFF1CC] p-4 text-[#153D33]"
+				role="alert"
+			>
 				<p>Vérifiez les champs du formulaire.</p>
 				<ul class="mt-2 list-disc pl-5">
 					{#each clientErrors as message, index (`${message}-${index}`)}
@@ -177,7 +191,7 @@
 					Nom du participant ou de la structure
 				</Label>
 				<Input
-					class="h-12 w-full rounded-lg border-slate-300 p-3"
+					class="h-12 w-full rounded-lg border-[#DAE8D8]/70 p-3"
 					id="name"
 					name="name"
 					type="text"
@@ -188,7 +202,7 @@
 					maxlength={100}
 				/>
 				{#if getFieldError('name')}
-					<p class="mt-1 text-sm text-red-700" id="name-error" aria-live="polite">
+					<p class="mt-1 text-sm text-[#F3ADB3]" id="name-error" aria-live="polite">
 						{getFieldError('name')}
 					</p>
 				{/if}
@@ -197,7 +211,7 @@
 			<div>
 				<Label class="mb-1 block font-medium" for="email">E-mail (facultatif)</Label>
 				<Input
-					class="h-12 w-full rounded-lg border-slate-300 p-3"
+					class="h-12 w-full rounded-lg border-[#DAE8D8]/70 p-3"
 					id="email"
 					name="email"
 					aria-invalid={Boolean(getFieldError('email'))}
@@ -206,7 +220,7 @@
 					autocomplete="email"
 				/>
 				{#if getFieldError('email')}
-					<p class="mt-1 text-sm text-red-700" id="email-error" aria-live="polite">
+					<p class="mt-1 text-sm text-[#F3ADB3]" id="email-error" aria-live="polite">
 						{getFieldError('email')}
 					</p>
 				{/if}
@@ -215,7 +229,7 @@
 			<div>
 				<Label class="mb-1 block font-medium" for="phone">Téléphone (facultatif)</Label>
 				<Input
-					class="h-12 w-full rounded-lg border-slate-300 p-3"
+					class="h-12 w-full rounded-lg border-[#DAE8D8]/70 p-3"
 					id="phone"
 					name="phone"
 					aria-invalid={Boolean(getFieldError('phone'))}
@@ -223,9 +237,9 @@
 					type="tel"
 					autocomplete="tel"
 				/>
-				<p class="mt-1 text-sm text-slate-600">Indiquez au moins un moyen de contact.</p>
+				<p class="mt-1 text-sm text-[#DAE8D8]">Indiquez au moins un moyen de contact.</p>
 				{#if getFieldError('phone')}
-					<p class="mt-1 text-sm text-red-700" id="phone-error" aria-live="polite">
+					<p class="mt-1 text-sm text-[#F3ADB3]" id="phone-error" aria-live="polite">
 						{getFieldError('phone')}
 					</p>
 				{/if}
@@ -234,7 +248,7 @@
 			<div>
 				<Label class="mb-1 block font-medium" for="description">Description de la fenêtre</Label>
 				<Textarea
-					class="min-h-28 w-full rounded-lg border-slate-300 p-3"
+					class="min-h-28 w-full rounded-lg border-[#DAE8D8]/70 p-3"
 					id="description"
 					name="description"
 					aria-invalid={Boolean(getFieldError('description'))}
@@ -244,7 +258,7 @@
 					maxlength="1000"
 				/>
 				{#if getFieldError('description')}
-					<p class="mt-1 text-sm text-red-700" id="description-error" aria-live="polite">
+					<p class="mt-1 text-sm text-[#F3ADB3]" id="description-error" aria-live="polite">
 						{getFieldError('description')}
 					</p>
 				{/if}
@@ -270,7 +284,7 @@
 				</Label>
 			</div>
 			{#if getFieldError('rulesAccepted')}
-				<p class="text-sm text-red-700" id="rulesAccepted-error" aria-live="polite">
+				<p class="text-sm text-[#F3ADB3]" id="rulesAccepted-error" aria-live="polite">
 					{getFieldError('rulesAccepted')}
 				</p>
 			{/if}
