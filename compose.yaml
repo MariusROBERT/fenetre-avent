@@ -1,0 +1,21 @@
+services:
+  app:
+    build:
+      context: .
+      args:
+        ORIGIN: ${ORIGIN:-http://localhost:3024}
+    restart: unless-stopped
+    init: true
+    ports:
+      - '127.0.0.1:${APP_PORT:-3024}:3000'
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 3000
+      ORIGIN: ${ORIGIN:-http://localhost:3024}
+      DATABASE_URL: /data/advent.sqlite
+    volumes:
+      - advent-data:/data
+
+volumes:
+  advent-data:

@@ -1,6 +1,6 @@
 export const siteConfig = {
 	name: 'Fenêtres de l’Avent',
-	publicUrl: 'http://localhost:5173',
+	publicUrl: 'http://localhost:3024',
 	adventYear: 2026,
 	rulesVersion: '2026-01',
 	municipality: {

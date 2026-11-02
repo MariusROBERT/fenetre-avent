@@ -11,7 +11,7 @@ export function load({ url }) {
 	return {
 		year,
 		initialDate: requestedDate && isAdventDate(requestedDate, year) ? requestedDate : null,
-		calendarUrl: new URL('/calendar.ics', siteConfig.publicUrl).toString(),
+		calendarUrl: new URL('/calendar.ics', url.origin).toString(),
 		days: Array.from({ length: 24 }, (_, index) => {
 			const date = `${year}-12-${String(index + 1).padStart(2, '0')}`;
 			const registration = registrations.get(date) ?? null;

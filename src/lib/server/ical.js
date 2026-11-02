@@ -50,8 +50,8 @@ function nextDay(date) {
 	return parsedDate.toISOString().slice(0, 10).replaceAll('-', '');
 }
 
-/** @param {Array<{id: string, date: string, name: string, description: string, address: string, updatedAt: string}>} registrations */
-export function generateIcalendar(registrations) {
+/** @param {Array<{id: string, date: string, name: string, description: string, address: string, updatedAt: string}>} registrations @param {string} [publicUrl] */
+export function generateIcalendar(registrations, publicUrl = siteConfig.publicUrl) {
 	const events = registrations.flatMap((registration) => {
 		const date = new Date(`${registration.date}T00:00:00Z`);
 		if (Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== registration.date) {
@@ -62,7 +62,7 @@ export function generateIcalendar(registrations) {
 		const updatedAt = toIcalTimestamp(registration.updatedAt);
 		const eventUrl = new URL(
 			`/?date=${encodeURIComponent(registration.date)}`,
-			siteConfig.publicUrl
+			publicUrl
 		).toString();
 
 		return [
