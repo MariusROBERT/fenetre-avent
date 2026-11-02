@@ -9,6 +9,9 @@
 	import { onDestroy } from 'svelte';
 	import { MapLibre, Marker } from 'svelte-maplibre';
 	import { siteConfig } from '#lib/config/site.js';
+	import { Button } from '#lib/components/ui/button/index.js';
+	import { Input } from '#lib/components/ui/input/index.js';
+	import { Label } from '#lib/components/ui/label/index.js';
 
 	/** @typedef {{label: string, longitude: number, latitude: number}} AddressSuggestion */
 
@@ -133,12 +136,13 @@
 
 <div class="space-y-4">
 	<div>
-		<label class="mb-1 block font-medium" for="address">Adresse de la fenêtre</label>
+		<Label class="mb-1 block font-medium" for="address">Adresse de la fenêtre</Label>
 		<div class="flex gap-2">
-			<input
-				class="min-w-0 flex-1 rounded-lg border border-slate-300 p-3"
+			<Input
+				class="h-12 min-w-0 flex-1 rounded-lg border-slate-300 p-3"
 				id="address"
 				name="address"
+				type="text"
 				bind:value={address}
 				aria-invalid={Boolean(errors.address?.[0])}
 				aria-describedby={errors.address?.[0] ? 'address-error' : undefined}
@@ -149,12 +153,13 @@
 				oninput={handleAddressInput}
 				required
 			/>
-			<button
-				class="min-h-11 shrink-0 rounded-lg border border-slate-300 px-3 text-sm font-medium hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800 disabled:cursor-not-allowed disabled:opacity-50"
+			<Button
+				variant="outline"
+				class="h-11 shrink-0 rounded-lg border-slate-300 px-3 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50"
 				type="button"
 				aria-label="Recentrer la carte sur les coordonnées GPS"
 				disabled={!Number.isFinite(longitude) || !Number.isFinite(latitude)}
-				onclick={recenterOnCoordinates}>Recentrer</button
+				onclick={recenterOnCoordinates}>Recentrer</Button
 			>
 		</div>
 		{#if errors.address?.[0]}
@@ -175,13 +180,14 @@
 			>
 				{#each suggestions as suggestion (suggestion.label)}
 					<li>
-						<button
-							class="w-full px-3 py-2 text-left hover:bg-slate-100 focus-visible:bg-slate-100"
+						<Button
+							variant="ghost"
+							class="h-auto w-full justify-start px-3 py-2 text-left"
 							type="button"
 							onclick={() => selectSuggestion(suggestion)}
 						>
 							{suggestion.label}
-						</button>
+						</Button>
 					</li>
 				{/each}
 			</ul>
@@ -224,9 +230,9 @@
 	<fieldset class="grid gap-4 sm:grid-cols-2">
 		<legend class="mb-2 font-medium">Coordonnées GPS</legend>
 		<div>
-			<label class="mb-1 block" for="latitude">Latitude</label>
-			<input
-				class="w-full rounded-lg border border-slate-300 p-3"
+			<Label class="mb-1 block" for="latitude">Latitude</Label>
+			<Input
+				class="h-12 w-full rounded-lg border-slate-300 p-3"
 				id="latitude"
 				name="latitude"
 				aria-invalid={Boolean(errors.latitude?.[0])}
@@ -249,9 +255,9 @@
 			{/if}
 		</div>
 		<div>
-			<label class="mb-1 block" for="longitude">Longitude</label>
-			<input
-				class="w-full rounded-lg border border-slate-300 p-3"
+			<Label class="mb-1 block" for="longitude">Longitude</Label>
+			<Input
+				class="h-12 w-full rounded-lg border-slate-300 p-3"
 				id="longitude"
 				name="longitude"
 				aria-invalid={Boolean(errors.longitude?.[0])}

@@ -1,6 +1,9 @@
 <script>
 	import { resolve } from '$app/paths';
-	import { Dialog } from 'bits-ui';
+	import { Button } from '#lib/components/ui/button/index.js';
+	import { Dialog } from '#lib/components/ui/dialog/index.js';
+	import { Input } from '#lib/components/ui/input/index.js';
+	import { Label } from '#lib/components/ui/label/index.js';
 	import { siteConfig } from '#lib/config/site.js';
 
 	/** @type {{data: import('./$types').PageData}} */
@@ -32,11 +35,22 @@
 		dialogOpen = true;
 	}
 
+	/** @param {typeof data.days[number]} day @returns {(event: MouseEvent) => void} */
+	function openDayHandler(day) {
+		return (event) => openDay(day, event);
+	}
+
 	/** @type {Record<string, string>} */
 	const stateLabels = {
 		available: 'Disponible',
 		reserved: 'Réservée',
 		past: 'Passée — libre'
+	};
+	/** @type {Record<string, string>} */
+	const stateClasses = {
+		available: 'border-green-700 bg-green-100',
+		reserved: 'border-amber-700 bg-amber-100',
+		past: 'border-slate-500 bg-slate-200'
 	};
 
 	$effect(() => {
@@ -87,22 +101,17 @@
 	<section aria-label={`Calendrier de l’Avent ${data.year}`}>
 		<div class="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
 			{#each data.days as day (day.date)}
-				<button
+				<Button
 					type="button"
-					class="min-h-28 rounded-xl border-2 p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
-					class:border-green-700={day.state === 'available'}
-					class:bg-green-100={day.state === 'available'}
-					class:border-amber-700={day.state === 'reserved'}
-					class:bg-amber-100={day.state === 'reserved'}
-					class:border-slate-500={day.state === 'past'}
-					class:bg-slate-200={day.state === 'past'}
+					variant="outline"
+					class={`min-h-28 rounded-xl border-2 p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 ${stateClasses[day.state]}`}
 					aria-label={`${formatDate(day.date)}, ${stateLabels[day.state]}`}
-					onclick={(event) => openDay(day, event)}
+					onclick={openDayHandler(day)}
 				>
 					<span class="block text-2xl font-bold text-slate-900">{Number(day.date.slice(-2))}</span>
 					<span class="mt-2 block text-sm font-medium text-slate-700">{stateLabels[day.state]}</span
 					>
-				</button>
+				</Button>
 			{/each}
 		</div>
 	</section>
@@ -124,27 +133,26 @@
 			<li>Apple Calendrier : « Fichier » puis « Nouvel abonnement au calendrier ».</li>
 			<li>Outlook : « Ajouter un calendrier » puis « S’abonner à partir du Web ».</li>
 		</ul>
-		<label class="mt-4 block text-sm font-medium" for="calendar-url">Lien d’abonnement</label>
+		<Label class="mt-4 block text-sm font-medium" for="calendar-url">Lien d’abonnement</Label>
 		<div class="mt-1 flex flex-col gap-2 sm:flex-row">
-			<input
-				class="min-w-0 flex-1 rounded-lg border border-slate-300 p-3"
+			<Input
+				class="h-12 min-w-0 flex-1 rounded-lg p-3"
 				id="calendar-url"
+				type="url"
 				value={data.calendarUrl}
 				readonly
 			/>
-			<button
-				class="min-h-11 rounded-lg border border-slate-300 px-4 font-medium hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
+			<Button
+				variant="outline"
+				class="min-h-11 rounded-lg border-slate-300 px-4 font-medium hover:bg-slate-50"
 				type="button"
 				onclick={copyCalendarUrl}
 			>
 				Copier le lien
-			</button>
-			<a
-				class="inline-flex min-h-11 items-center justify-center rounded-lg bg-emerald-800 px-4 font-medium text-white hover:bg-emerald-900"
-				href={resolve('/calendar.ics')}
-			>
+			</Button>
+			<Button class="min-h-11 rounded-lg px-4 font-medium" href={resolve('/calendar.ics')}>
 				Ouvrir le flux
-			</a>
+			</Button>
 		</div>
 		<p class="mt-2 text-sm text-slate-600" aria-live="polite">{copyMessage}</p>
 	</section>
@@ -190,12 +198,12 @@
 					</div>
 				{:else if selectedDay.state === 'available'}
 					<p class="mt-5 text-slate-700">Cette date est libre. Les inscriptions sont ouvertes.</p>
-					<a
-						class="mt-5 inline-flex min-h-11 items-center rounded-lg bg-emerald-800 px-5 font-semibold text-white hover:bg-emerald-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
+					<Button
+						class="mt-5 min-h-11 rounded-lg px-5 font-semibold"
 						href={resolve('/register/[date]', { date: selectedDay.date })}
 					>
 						S’inscrire
-					</a>
+					</Button>
 				{:else}
 					<p class="mt-5 text-slate-700">Aucune fenêtre n’a été inscrite pour cette date.</p>
 				{/if}

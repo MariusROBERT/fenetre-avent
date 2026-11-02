@@ -3,6 +3,11 @@
 	import { tick } from 'svelte';
 	import RulesContent from '#lib/components/RulesContent.svelte';
 	import LocationPicker from '#lib/components/LocationPicker.svelte';
+	import { Button } from '#lib/components/ui/button/index.js';
+	import { Checkbox } from '#lib/components/ui/checkbox/index.js';
+	import { Input } from '#lib/components/ui/input/index.js';
+	import { Label } from '#lib/components/ui/label/index.js';
+	import { Textarea } from '#lib/components/ui/textarea/index.js';
 	import { siteConfig } from '#lib/config/site.js';
 	import { registrationInputFromFormData, registrationSchema } from '#lib/schemas/registration.js';
 
@@ -15,6 +20,8 @@
 	/** @type {Record<string, boolean>} */
 	let touchedFields = $state({});
 	let submitAttempted = $state(false);
+	/** @type {HTMLFormElement | null} */
+	let formElement = $state(null);
 	let address = $state('');
 	let latitude = $state(siteConfig.municipality.mapCenter[1]);
 	let longitude = $state(siteConfig.municipality.mapCenter[0]);
@@ -45,6 +52,14 @@
 		return fieldErrors[field]?.[0] ?? '';
 	}
 
+	/** @param {ReturnType<typeof registrationInputFromFormData>} input */
+	function updateValidation(input) {
+		const result = registrationSchema.safeParse(input);
+		liveFieldErrors = result.success ? {} : result.error.flatten().fieldErrors;
+		if (submitAttempted)
+			clientErrors = result.success ? [] : result.error.issues.map((issue) => issue.message);
+	}
+
 	/** @param {Event} event */
 	function validateField(event) {
 		const field = /** @type {HTMLInputElement | HTMLTextAreaElement} */ (event.target).name;
@@ -56,12 +71,16 @@
 			...(field === 'email' || field === 'phone' ? { email: true, phone: true } : {})
 		};
 		const formElement = /** @type {HTMLFormElement} */ (event.currentTarget);
-		const result = registrationSchema.safeParse(
-			registrationInputFromFormData(new FormData(formElement))
-		);
-		liveFieldErrors = result.success ? {} : result.error.flatten().fieldErrors;
-		if (submitAttempted)
-			clientErrors = result.success ? [] : result.error.issues.map((issue) => issue.message);
+		updateValidation(registrationInputFromFormData(new FormData(formElement)));
+	}
+
+	/** @param {boolean} checked */
+	function validateRulesAcceptance(checked) {
+		touchedFields = { ...touchedFields, rulesAccepted: true };
+		if (!formElement) return;
+		const input = registrationInputFromFormData(new FormData(formElement));
+		input.rulesAccepted = checked;
+		updateValidation(input);
 	}
 
 	/** @param {SubmitEvent & {currentTarget: HTMLFormElement}} event */
@@ -149,23 +168,25 @@
 			method="POST"
 			class="mt-6 space-y-5"
 			novalidate
+			bind:this={formElement}
 			oninput={validateField}
 			onfocusout={validateField}
 			onsubmit={validateForm}
 		>
 			<div>
-				<label class="mb-1 block font-medium" for="name"
-					>Nom du participant ou de la structure</label
-				>
-				<input
-					class="w-full rounded-lg border border-slate-300 p-3"
+				<Label class="mb-1 block font-medium" for="name">
+					Nom du participant ou de la structure
+				</Label>
+				<Input
+					class="h-12 w-full rounded-lg border-slate-300 p-3"
 					id="name"
 					name="name"
+					type="text"
 					aria-invalid={Boolean(getFieldError('name'))}
 					aria-describedby={getFieldError('name') ? 'name-error' : undefined}
 					required
-					minlength="2"
-					maxlength="100"
+					minlength={2}
+					maxlength={100}
 				/>
 				{#if getFieldError('name')}
 					<p class="mt-1 text-sm text-red-700" id="name-error" aria-live="polite">
@@ -175,9 +196,9 @@
 			</div>
 
 			<div>
-				<label class="mb-1 block font-medium" for="email">E-mail (facultatif)</label>
-				<input
-					class="w-full rounded-lg border border-slate-300 p-3"
+				<Label class="mb-1 block font-medium" for="email">E-mail (facultatif)</Label>
+				<Input
+					class="h-12 w-full rounded-lg border-slate-300 p-3"
 					id="email"
 					name="email"
 					aria-invalid={Boolean(getFieldError('email'))}
@@ -193,9 +214,9 @@
 			</div>
 
 			<div>
-				<label class="mb-1 block font-medium" for="phone">Téléphone (facultatif)</label>
-				<input
-					class="w-full rounded-lg border border-slate-300 p-3"
+				<Label class="mb-1 block font-medium" for="phone">Téléphone (facultatif)</Label>
+				<Input
+					class="h-12 w-full rounded-lg border-slate-300 p-3"
 					id="phone"
 					name="phone"
 					aria-invalid={Boolean(getFieldError('phone'))}
@@ -212,16 +233,17 @@
 			</div>
 
 			<div>
-				<label class="mb-1 block font-medium" for="description">Description de la fenêtre</label>
-				<textarea
-					class="min-h-28 w-full rounded-lg border border-slate-300 p-3"
+				<Label class="mb-1 block font-medium" for="description">Description de la fenêtre</Label>
+				<Textarea
+					class="min-h-28 w-full rounded-lg border-slate-300 p-3"
 					id="description"
 					name="description"
 					aria-invalid={Boolean(getFieldError('description'))}
 					aria-describedby={getFieldError('description') ? 'description-error' : undefined}
 					required
 					minlength="5"
-					maxlength="1000"></textarea>
+					maxlength="1000"
+				/>
 				{#if getFieldError('description')}
 					<p class="mt-1 text-sm text-red-700" id="description-error" aria-live="polite">
 						{getFieldError('description')}
@@ -240,32 +262,31 @@
 				>
 				<span> (version {data.rulesVersion})</span>
 			</p>
-			<label class="flex items-start gap-3">
-				<input
-					class="mt-1 size-5 shrink-0"
-					type="checkbox"
+			<div class="flex items-start gap-3">
+				<Checkbox
+					class="mt-1"
+					id="rulesAccepted"
 					name="rulesAccepted"
+					value="on"
 					aria-invalid={Boolean(getFieldError('rulesAccepted'))}
 					aria-describedby={getFieldError('rulesAccepted') ? 'rulesAccepted-error' : undefined}
+					onCheckedChange={validateRulesAcceptance}
 					required
 				/>
-				<span
-					>J’ai lu et j’accepte le règlement. Je comprends que les informations publiques seront
-					publiées.</span
-				>
-			</label>
+				<Label class="leading-6" for="rulesAccepted">
+					J’ai lu et j’accepte le règlement. Je comprends que les informations publiques seront
+					publiées.
+				</Label>
+			</div>
 			{#if getFieldError('rulesAccepted')}
 				<p class="text-sm text-red-700" id="rulesAccepted-error" aria-live="polite">
 					{getFieldError('rulesAccepted')}
 				</p>
 			{/if}
 
-			<button
-				class="min-h-12 rounded-lg bg-emerald-800 px-5 font-semibold text-white hover:bg-emerald-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
-				type="submit"
-			>
+			<Button class="h-12 rounded-lg px-5 font-semibold" type="submit">
 				Confirmer l’inscription
-			</button>
+			</Button>
 		</form>
 	{/if}
 </main>
