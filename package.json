@@ -50,11 +50,14 @@
 		"#lib/*": "./src/lib/*"
 	},
 	"dependencies": {
+		"@michaelcuneo/markdown-editor": "^0.0.38",
 		"better-sqlite3": "^13.0.3",
 		"bits-ui": "^2.20.3",
 		"drizzle-orm": "^0.45.4",
 		"maplibre-gl": "^6.16.0",
-		"marked": "^18.1.2",
+		"prosemirror-inputrules": "^1.5.1",
+		"prosemirror-keymap": "^1.2.3",
+		"prosemirror-tables": "^1.8.5",
 		"svelte-maplibre": "^2.0.1",
 		"zod": "^4.6.7"
 	}

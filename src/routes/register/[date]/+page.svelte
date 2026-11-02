@@ -1,7 +1,6 @@
 <script>
 	import { resolve } from '$app/paths';
 	import { tick } from 'svelte';
-	import RulesContent from '#lib/components/RulesContent.svelte';
 	import LocationPicker from '#lib/components/LocationPicker.svelte';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import { Checkbox } from '#lib/components/ui/checkbox/index.js';
@@ -253,15 +252,6 @@
 
 			<LocationPicker bind:address bind:latitude bind:longitude errors={fieldErrors} />
 
-			<div class="rounded-lg bg-slate-50 p-4">
-				<RulesContent content={data.rulesHtml} />
-			</div>
-			<p class="text-sm">
-				<a class="underline underline-offset-4" href={resolve('/rules')}
-					>Lire le règlement dans une page dédiée</a
-				>
-				<span> (version {data.rulesVersion})</span>
-			</p>
 			<div class="flex items-start gap-3">
 				<Checkbox
 					class="mt-1"
@@ -274,8 +264,9 @@
 					required
 				/>
 				<Label class="leading-6" for="rulesAccepted">
-					J’ai lu et j’accepte le règlement. Je comprends que les informations publiques seront
-					publiées.
+					J’ai lu et j’accepte le
+					<a class="underline underline-offset-4" href={resolve('/rules')}>règlement</a>. Je
+					comprends que les informations publiques seront publiées.
 				</Label>
 			</div>
 			{#if getFieldError('rulesAccepted')}

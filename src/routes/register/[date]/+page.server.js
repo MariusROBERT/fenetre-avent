@@ -6,9 +6,6 @@ import { registration } from '#lib/server/db/schema.js';
 import { isAdventDate, isEligibleAdventDate } from '#lib/server/registrations/date-rules.js';
 import { isInsideMunicipality } from '#lib/server/registrations/geography.js';
 import { isDateReserved } from '#lib/server/registrations/queries.js';
-import rulesMarkdown from '#lib/content/rules.md?raw';
-import { marked } from 'marked';
-
 export async function load({ params }) {
 	if (!isAdventDate(params.date, siteConfig.adventYear)) {
 		throw error(404, 'Cette date ne fait pas partie du calendrier.');
@@ -24,9 +21,7 @@ export async function load({ params }) {
 			? 'Cette date est déjà réservée.'
 			: !eligible
 				? 'La date est passée, les inscriptions sont closes.'
-				: null,
-		rulesHtml: await marked.parse(rulesMarkdown),
-		rulesVersion: siteConfig.rulesVersion
+				: null
 	};
 }
 
