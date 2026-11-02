@@ -15,6 +15,16 @@
 </main>
 
 <style>
+	.rules {
+		--md-fg: #0f172a;
+		--md-h1: #0f172a;
+		--md-h2: #0f172a;
+		--md-h3: #0f172a;
+		--md-strong: #0f172a;
+		--md-em: #166534;
+		--md-muted: #475569;
+	}
+
 	.rules :global(h1) {
 		font-size: 1.875rem;
 		font-weight: 700;
