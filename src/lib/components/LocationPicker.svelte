@@ -12,11 +12,12 @@
 
 	/** @typedef {{label: string, longitude: number, latitude: number}} AddressSuggestion */
 
-	/** @type {{address: string, latitude: number, longitude: number}} */
+	/** @type {{address: string, latitude: number, longitude: number, errors: Record<string, string[] | undefined>}} */
 	let {
 		address = $bindable(''),
 		latitude = $bindable(siteConfig.municipality.mapCenter[1]),
-		longitude = $bindable(siteConfig.municipality.mapCenter[0])
+		longitude = $bindable(siteConfig.municipality.mapCenter[0]),
+		errors
 	} = $props();
 
 	/** @type {[number, number]} */
@@ -29,8 +30,6 @@
 		siteConfig.municipality.mapCenter[0],
 		siteConfig.municipality.mapCenter[1]
 	]);
-	/** @type {[number, number] | null} */
-	let selectedAddressPosition = $state(null);
 	/** @type {AddressSuggestion[]} */
 	let suggestions = $state([]);
 	let loading = $state(false);
@@ -62,7 +61,6 @@
 	/** @param {Event} event */
 	function handleAddressInput(event) {
 		address = /** @type {HTMLInputElement} */ (event.currentTarget).value;
-		selectedAddressPosition = null;
 		clearTimeout(searchTimer);
 		searchController?.abort();
 		suggestions = [];
@@ -103,16 +101,15 @@
 		clearTimeout(searchTimer);
 		searchController?.abort();
 		address = suggestion.label;
-		selectedAddressPosition = [suggestion.longitude, suggestion.latitude];
-		markerPosition = selectedAddressPosition;
-		mapCenter = selectedAddressPosition;
+		markerPosition = [suggestion.longitude, suggestion.latitude];
+		mapCenter = markerPosition;
 		suggestions = [];
 		searchError = '';
 		loading = false;
 	}
 
-	function recenterOnAddress() {
-		if (selectedAddressPosition) mapCenter = selectedAddressPosition;
+	function recenterOnCoordinates() {
+		mapCenter = [longitude, latitude];
 	}
 
 	function updateMarkerFromInputs() {
@@ -143,6 +140,8 @@
 				id="address"
 				name="address"
 				bind:value={address}
+				aria-invalid={Boolean(errors.address?.[0])}
+				aria-describedby={errors.address?.[0] ? 'address-error' : undefined}
 				autocomplete="street-address"
 				aria-autocomplete="list"
 				aria-controls="address-suggestions"
@@ -153,11 +152,16 @@
 			<button
 				class="min-h-11 shrink-0 rounded-lg border border-slate-300 px-3 text-sm font-medium hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800 disabled:cursor-not-allowed disabled:opacity-50"
 				type="button"
-				aria-label="Recentrer la carte sur l’adresse sélectionnée"
-				disabled={!selectedAddressPosition}
-				onclick={recenterOnAddress}>Recentrer</button
+				aria-label="Recentrer la carte sur les coordonnées GPS"
+				disabled={!Number.isFinite(longitude) || !Number.isFinite(latitude)}
+				onclick={recenterOnCoordinates}>Recentrer</button
 			>
 		</div>
+		{#if errors.address?.[0]}
+			<p class="mt-1 text-sm text-red-700" id="address-error" aria-live="polite">
+				{errors.address[0]}
+			</p>
+		{/if}
 		{#if loading}
 			<p class="mt-1 text-sm text-slate-600" aria-live="polite">Recherche d’adresses…</p>
 		{/if}
@@ -225,6 +229,8 @@
 				class="w-full rounded-lg border border-slate-300 p-3"
 				id="latitude"
 				name="latitude"
+				aria-invalid={Boolean(errors.latitude?.[0])}
+				aria-describedby={errors.latitude?.[0] ? 'latitude-error' : undefined}
 				type="number"
 				step="any"
 				min="-90"
@@ -236,6 +242,11 @@
 				}}
 				required
 			/>
+			{#if errors.latitude?.[0]}
+				<p class="mt-1 text-sm text-red-700" id="latitude-error" aria-live="polite">
+					{errors.latitude[0]}
+				</p>
+			{/if}
 		</div>
 		<div>
 			<label class="mb-1 block" for="longitude">Longitude</label>
@@ -243,6 +254,8 @@
 				class="w-full rounded-lg border border-slate-300 p-3"
 				id="longitude"
 				name="longitude"
+				aria-invalid={Boolean(errors.longitude?.[0])}
+				aria-describedby={errors.longitude?.[0] ? 'longitude-error' : undefined}
 				type="number"
 				step="any"
 				min="-180"
@@ -254,6 +267,11 @@
 				}}
 				required
 			/>
+			{#if errors.longitude?.[0]}
+				<p class="mt-1 text-sm text-red-700" id="longitude-error" aria-live="polite">
+					{errors.longitude[0]}
+				</p>
+			{/if}
 		</div>
 	</fieldset>
 </div>

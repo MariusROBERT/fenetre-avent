@@ -9,7 +9,7 @@ export const siteConfig = {
 		postalCode: '38000',
 		boundaryGeoJson: 'config/commune.geojson',
 		// Coordinates use [longitude, latitude], matching GeoJSON and MapLibre.
-		mapCenter: /** @type {[number, number]} */ ([5.9874, 45.2571]),
+		mapCenter: /** @type {[number, number]} */ ([5.71554, 45.18423]),
 		mapBounds: /** @type {[[number, number], [number, number]]} */ ([
 			[5.678003, 45.154148],
 			[5.753078, 45.214319]

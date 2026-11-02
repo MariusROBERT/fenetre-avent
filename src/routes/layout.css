@@ -1,1 +1,7 @@
 @import 'tailwindcss';
+
+[aria-invalid='true'] {
+	border-color: #b91c1c;
+	outline: 1px solid #b91c1c;
+	outline-offset: 1px;
+}

@@ -37,21 +37,24 @@ export const actions = {
 			return fail(400, {
 				success: false,
 				message: 'Cette date ne fait pas partie du calendrier.',
-				errors: []
+				errors: [],
+				fieldErrors: {}
 			});
 		}
 		if (!isEligibleAdventDate(date, siteConfig.adventYear)) {
 			return fail(400, {
 				success: false,
 				message: 'Les inscriptions pour cette date sont closes.',
-				errors: []
+				errors: [],
+				fieldErrors: {}
 			});
 		}
 		if (isDateReserved(date)) {
 			return fail(409, {
 				success: false,
 				message: 'Cette date vient d’être réservée. Choisissez une autre date.',
-				errors: []
+				errors: [],
+				fieldErrors: {}
 			});
 		}
 
@@ -61,7 +64,8 @@ export const actions = {
 			return fail(400, {
 				success: false,
 				message: 'Vérifiez les champs du formulaire.',
-				errors: parsed.error.issues.map((issue) => issue.message)
+				errors: parsed.error.issues.map((issue) => issue.message),
+				fieldErrors: parsed.error.flatten().fieldErrors
 			});
 		}
 
@@ -70,7 +74,11 @@ export const actions = {
 			return fail(400, {
 				success: false,
 				message: 'Le point GPS doit se trouver dans la commune de Grenoble.',
-				errors: []
+				errors: [],
+				fieldErrors: {
+					latitude: ['Placez le marqueur dans la commune de Grenoble.'],
+					longitude: ['Placez le marqueur dans la commune de Grenoble.']
+				}
 			});
 		}
 
@@ -100,7 +108,8 @@ export const actions = {
 				return fail(409, {
 					success: false,
 					message: 'Cette date vient d’être réservée. Choisissez une autre date.',
-					errors: []
+					errors: [],
+					fieldErrors: {}
 				});
 			}
 			throw cause;
@@ -110,6 +119,7 @@ export const actions = {
 			success: true,
 			message: null,
 			errors: [],
+			fieldErrors: {},
 			confirmation: {
 				date,
 				name: values.name,
