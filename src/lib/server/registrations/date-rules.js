@@ -25,7 +25,11 @@ export function isAdventDate(date, year) {
 	return day >= 1 && day <= 24;
 }
 
-/** @param {string} date @param {number} year @param {Date} [now] @returns {boolean} */
+/** @param {string} date
+ * @param {number} year
+ * @param {Date} [now]
+ * @returns {boolean}
+ */
 export function isEligibleAdventDate(date, year, now = new Date()) {
 	return isAdventDate(date, year) && date >= getParisDate(now);
 }

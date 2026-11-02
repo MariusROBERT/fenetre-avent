@@ -17,7 +17,10 @@ const polygons =
 if (polygons.length === 0)
 	throw new Error('Municipal GeoJSON must contain a Polygon or MultiPolygon.');
 
-/** @param {number[][]} ring @param {number} longitude @param {number} latitude */
+/** @param {number[][]} ring
+ * @param {number} longitude
+ * @param {number} latitude
+ */
 function ringContainsPoint(ring, longitude, latitude) {
 	let inside = false;
 
@@ -44,7 +47,9 @@ function ringContainsPoint(ring, longitude, latitude) {
 	return inside;
 }
 
-/** @param {number} longitude @param {number} latitude */
+/** @param {number} longitude
+ * @param {number} latitude
+ */
 export function isInsideMunicipality(longitude, latitude) {
 	if (
 		!Number.isFinite(longitude) ||

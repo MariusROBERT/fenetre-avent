@@ -50,7 +50,9 @@ function nextDay(date) {
 	return parsedDate.toISOString().slice(0, 10).replaceAll('-', '');
 }
 
-/** @param {Array<{id: string, date: string, name: string, description: string, address: string, updatedAt: string}>} registrations @param {string} [publicUrl] */
+/** @param {Array<{id: string, date: string, name: string, description: string, address: string, updatedAt: string}>} registrations
+ * @param {string} [publicUrl]
+ */
 export function generateIcalendar(registrations, publicUrl = siteConfig.publicUrl) {
 	const events = registrations.flatMap((registration) => {
 		const date = new Date(`${registration.date}T00:00:00Z`);
