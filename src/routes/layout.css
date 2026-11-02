@@ -24,26 +24,34 @@
 
 :root {
 	--radius: 0.625rem;
-	--background: #fff;
-	--foreground: #0f172a;
-	--card: #fff;
-	--card-foreground: #0f172a;
-	--primary: #166534;
-	--primary-foreground: #fff;
-	--secondary: #f1f5f9;
-	--secondary-foreground: #0f172a;
-	--muted: #f1f5f9;
-	--muted-foreground: #64748b;
-	--accent: #ecfdf5;
-	--accent-foreground: #14532d;
-	--destructive: #b91c1c;
-	--border: #cbd5e1;
-	--input: #cbd5e1;
-	--ring: #15803d;
+	--background: #153d33;
+	--foreground: #fff4db;
+	--card: #fff9ed;
+	--card-foreground: #153d33;
+	--primary: #bb4551;
+	--primary-foreground: #fff4db;
+	--secondary: #dae8d8;
+	--secondary-foreground: #153d33;
+	--muted: #21483d;
+	--muted-foreground: #dae8d8;
+	--accent: #d6b56e;
+	--accent-foreground: #153d33;
+	--destructive: #bb4551;
+	--border: #718d81;
+	--input: #dae8d8;
+	--ring: #d6b56e;
 }
 
 [aria-invalid='true'] {
-	border-color: #b91c1c;
-	outline: 1px solid #b91c1c;
+	border-color: #f2a2a8;
+	outline: 1px solid #f2a2a8;
 	outline-offset: 1px;
+}
+
+body {
+	min-height: 100vh;
+	color: var(--foreground);
+	background-color: var(--background);
+	background: linear-gradient(155deg, #1b493d 0%, #153d33 56%, #102e27 100%);
+	background-attachment: fixed;
 }
