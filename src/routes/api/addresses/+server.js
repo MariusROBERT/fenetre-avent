@@ -41,7 +41,7 @@ export async function GET({ url, fetch }) {
 	} catch {
 		return Response.json(
 			{
-				error: 'Le service de recherche d’adresses est momentanément indisponible.',
+				error: 'Le service de recherche d\'adresses est momentanément indisponible.',
 				suggestions: []
 			},
 			{ status: 502 }

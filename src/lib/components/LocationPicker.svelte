@@ -78,7 +78,7 @@
 			suggestions = result.suggestions;
 		} catch (error) {
 			if (!(error instanceof Error) || error.name !== 'AbortError') {
-				searchError = 'La recherche est indisponible. Vous pouvez saisir l’adresse manuellement.';
+				searchError = 'La recherche est indisponible. Vous pouvez saisir l\'adresse manuellement.';
 			}
 		} finally {
 			if (searchController === controller) loading = false;
@@ -154,7 +154,7 @@
 			</p>
 		{/if}
 		{#if loading}
-			<p class="mt-1 text-sm text-[#DAE8D8]" aria-live="polite">Recherche d’adresses…</p>
+			<p class="mt-1 text-sm text-[#DAE8D8]" aria-live="polite">Recherche d'adresses…</p>
 		{/if}
 		{#if searchError}
 			<p class="mt-1 text-sm text-[#F3ADB3]" role="status">{searchError}</p>
@@ -187,7 +187,7 @@
 
 	<div>
 		<p class="mb-2 text-sm text-[#DAE8D8]">
-			Déplacez le marqueur jusqu’à l’emplacement de la fenêtre. Vous pouvez aussi ajuster les
+			Déplacez le marqueur jusqu'à l'emplacement de la fenêtre. Vous pouvez aussi ajuster les
 			coordonnées ci-dessous.
 		</p>
 		<div class="h-80 overflow-hidden rounded-lg border border-[#DAE8D8]/70">

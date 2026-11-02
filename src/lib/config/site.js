@@ -1,5 +1,5 @@
 export const siteConfig = {
-	name: 'Fenêtres de l’Avent',
+	name: 'Fenêtres de l\'Avent',
 	publicUrl: 'http://localhost:3024',
 	adventYear: 2026,
 	rulesVersion: '2026-01',

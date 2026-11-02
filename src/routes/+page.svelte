@@ -81,7 +81,7 @@
 <svelte:head>
 	<meta
 		name="description"
-		content={`Calendrier des fenêtres de l’Avent ${data.year} — ${siteConfig.municipality.name}.`}
+		content={`Calendrier des fenêtres de l'Avent ${data.year} — ${siteConfig.municipality.name}.`}
 	/>
 </svelte:head>
 
@@ -97,7 +97,7 @@
 	<header class="mb-8 text-center">
 		<p class="font-medium text-[#D6B56E]">{siteConfig.municipality.name}</p>
 		<h1 class="mt-2 text-3xl font-bold tracking-tight text-[#FFF4DB] sm:text-4xl">
-			Fenêtres de l’Avent {data.year}
+			Fenêtres de l'Avent {data.year}
 		</h1>
 		<p class="mx-auto mt-3 max-w-2xl text-[#DAE8D8]">
 			Découvrez les fenêtres décorées du 1<sup>er</sup> au 24 décembre, ou choisissez une date libre pour
@@ -114,7 +114,7 @@
 		<li><span aria-hidden="true" class="text-[#DAE8D8]">●</span> Passée</li>
 	</ul>
 
-	<section aria-label={`Calendrier de l’Avent ${data.year}`}>
+	<section aria-label={`Calendrier de l'Avent ${data.year}`}>
 		<div class="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
 			{#each data.days as day (day.date)}
 				<Button
@@ -142,18 +142,18 @@
 	<section
 		class="mt-10 rounded-xl border border-[#D6B56E]/50 bg-[#FFF9ED] p-5 text-[#153D33] shadow-lg shadow-[#0A2B24]/20"
 	>
-		<h2 class="text-xl font-semibold text-[#153D33]">S’abonner au calendrier</h2>
+		<h2 class="text-xl font-semibold text-[#153D33]">S'abonner au calendrier</h2>
 		<p class="mt-2 text-[#455F54]">
-			Ajoutez le flux à votre application pour recevoir les mises à jour. L’importation d’un fichier
+			Ajoutez le flux à votre application pour recevoir les mises à jour. L'importation d'un fichier
 			est ponctuelle et ne se synchronise pas.
 		</p>
 		<ul class="mt-3 list-disc space-y-1 pl-5 text-sm text-[#455F54]">
-			<li>Google Agenda : « Ajouter un agenda » puis « À partir d’une URL ».</li>
+			<li>Google Agenda : « Ajouter un agenda » puis « À partir d'une URL ».</li>
 			<li>Apple Calendrier : « Fichier » puis « Nouvel abonnement au calendrier ».</li>
-			<li>Outlook : « Ajouter un calendrier » puis « S’abonner à partir du Web ».</li>
+			<li>Outlook : « Ajouter un calendrier » puis « S'abonner à partir du Web ».</li>
 		</ul>
 		<Label class="mt-4 block text-sm font-medium text-[#153D33]" for="calendar-url"
-			>Lien d’abonnement</Label
+			>Lien d'abonnement</Label
 		>
 		<div class="mt-1 flex flex-col gap-2 sm:flex-row">
 			<Input
@@ -244,10 +244,10 @@
 						class="mt-5 min-h-11 rounded-lg px-5 font-semibold"
 						href={resolve('/register/[date]', { date: selectedDay.date })}
 					>
-						S’inscrire
+						S'inscrire
 					</Button>
 				{:else}
-					<p class="mt-5 text-slate-700">Aucune fenêtre n’a été inscrite pour cette date.</p>
+					<p class="mt-5 text-slate-700">Aucune fenêtre n'a été inscrite pour cette date.</p>
 				{/if}
 
 				<Dialog.Close

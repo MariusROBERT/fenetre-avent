@@ -1,4 +1,4 @@
-# Fenêtres de l’Avent
+# Fenêtres de l'Avent
 
 Public Advent window calendar. Grenoble (38000) is the example municipality; configure another municipality in `src/lib/config/site.js` and provide its boundary in `config/commune.geojson`. Visitors can browse the December 1–24 calendar, register a window without an account, and subscribe to a public iCalendar feed.
 
@@ -58,16 +58,16 @@ The production image uses `adapter-node`; development remains local and does not
 docker compose up -d --build
 ```
 
-Compose stores SQLite in the persistent `advent-data` volume and runs migrations before starting the server. The default host port is `3024`; set `ORIGIN` to the public HTTPS origin before building, and `APP_PORT` to the host port reachable by the reverse proxy. The app port is bound to `127.0.0.1` by default so it is not directly exposed to the Internet. HTTPS termination is the reverse proxy’s responsibility.
+Compose stores SQLite in the persistent `advent-data` volume and runs migrations before starting the server. The default host port is `3024`; set `ORIGIN` to the public HTTPS origin before building, and `APP_PORT` to the host port reachable by the reverse proxy. The app port is bound to `127.0.0.1` by default so it is not directly exposed to the Internet. HTTPS termination is the reverse proxy's responsibility.
 
-Back up the live database using SQLite’s backup API, not by copying the file while it is open:
+Back up the live database using SQLite's backup API, not by copying the file while it is open:
 
 ```sh
 docker compose exec -T app node --input-type=module -e 'import Database from "better-sqlite3"; const db = new Database(process.env.DATABASE_URL); await db.backup("/data/advent-backup.sqlite"); db.close();'
 docker cp "$(docker compose ps -q app):/data/advent-backup.sqlite" ./advent-backup.sqlite
 ```
 
-To restore a verified backup, stop the app, copy the backup into the stopped container, replace the database as the container’s `node` user, then start it again:
+To restore a verified backup, stop the app, copy the backup into the stopped container, replace the database as the container's `node` user, then start it again:
 
 ```sh
 docker compose stop app

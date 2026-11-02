@@ -42,7 +42,7 @@ export const registrationSchema = z
 			.trim()
 			.min(5, 'La description doit comporter au moins 5 caractères.')
 			.max(1000, 'La description ne peut pas dépasser 1 000 caractères.'),
-		address: z.string().trim().min(1, 'L’adresse est obligatoire.'),
+		address: z.string().trim().min(1, 'L\'adresse est obligatoire.'),
 		latitude: coordinate(-90, 90),
 		longitude: coordinate(-180, 180),
 		rulesAccepted: z.boolean().refine(Boolean, 'Vous devez accepter le règlement.')

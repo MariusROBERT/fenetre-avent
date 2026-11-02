@@ -47,7 +47,7 @@ export const actions = {
 		if (isDateReserved(date)) {
 			return fail(409, {
 				success: false,
-				message: 'Cette date vient d’être réservée. Choisissez une autre date.',
+				message: 'Cette date vient d\'être réservée. Choisissez une autre date.',
 				errors: [],
 				fieldErrors: {}
 			});
@@ -102,7 +102,7 @@ export const actions = {
 			) {
 				return fail(409, {
 					success: false,
-					message: 'Cette date vient d’être réservée. Choisissez une autre date.',
+					message: 'Cette date vient d\'être réservée. Choisissez une autre date.',
 					errors: [],
 					fieldErrors: {}
 				});

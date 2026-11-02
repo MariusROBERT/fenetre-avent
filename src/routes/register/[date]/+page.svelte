@@ -278,7 +278,7 @@
 					required
 				/>
 				<Label class="leading-6" for="rulesAccepted">
-					J’ai lu et j’accepte le
+					J'ai lu et j'accepte le
 					<a class="underline underline-offset-4" href={resolve('/rules')}>règlement</a>. Je
 					comprends que les informations publiques seront publiées.
 				</Label>
@@ -290,7 +290,7 @@
 			{/if}
 
 			<Button class="h-12 rounded-lg px-5 font-semibold" type="submit">
-				Confirmer l’inscription
+				Confirmer l'inscription
 			</Button>
 		</form>
 	{/if}

@@ -40,7 +40,7 @@ test('feed includes all years, stable IDs, all-day boundaries, and no contacts',
 	assert.match(feed, /DTSTART;VALUE=DATE:20241224/);
 	assert.match(feed, /DTEND;VALUE=DATE:20241225/);
 	assert.match(feed, /DTSTART;VALUE=DATE:20261201/);
-	assert.match(feed, /SUMMARY:Fenêtre de l’Avent — Famille Martin/);
+	assert.match(feed, /SUMMARY:Fenêtre de l'Avent — Famille Martin/);
 	assert.match(feed, /DTSTAMP:20241220T103000Z/);
 	assert.match(feed, /LAST-MODIFIED:20261120T103000Z/);
 	assert.doesNotMatch(feed, /private@example.com|0600000000/);

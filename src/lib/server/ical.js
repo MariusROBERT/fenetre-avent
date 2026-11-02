@@ -74,7 +74,7 @@ export function generateIcalendar(registrations, publicUrl = siteConfig.publicUr
 			`LAST-MODIFIED:${updatedAt}`,
 			`DTSTART;VALUE=DATE:${dateValue}`,
 			`DTEND;VALUE=DATE:${nextDay(registration.date)}`,
-			`SUMMARY:${escapeIcalText(`Fenêtre de l’Avent — ${registration.name}`)}`,
+			`SUMMARY:${escapeIcalText(`Fenêtre de l'Avent — ${registration.name}`)}`,
 			`DESCRIPTION:${escapeIcalText(`${registration.description}\nAdresse : ${registration.address}`)}`,
 			`LOCATION:${escapeIcalText(registration.address)}`,
 			`URL:${eventUrl}`,
