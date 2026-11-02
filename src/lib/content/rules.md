@@ -1,10 +1,8 @@
 # Règlement du calendrier des fenêtres de l’Avent
 
-Version : 2026-01
-
 ## Participation
 
-Chaque date du 1<sup>er</sup> au 24 décembre peut accueillir une fenêtre décorée. Une seule inscription active est acceptée par date. La participation est ouverte aux habitants, familles et organismes qui souhaitent proposer une fenêtre située dans la commune de Grenoble.
+Chaque date du 1er au 24 décembre peut accueillir une fenêtre décorée. Une seule inscription active est acceptée par date. La participation est ouverte aux habitants, familles et organismes qui souhaitent proposer une fenêtre située dans la commune de Grenoble.
 
 La personne qui inscrit une fenêtre doit être autorisée à la présenter et s’engage à la rendre visible à la date choisie. L’installation doit rester sûre et ne pas gêner la circulation ou l’accès aux propriétés.
 
