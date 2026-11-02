@@ -278,9 +278,11 @@
 					required
 				/>
 				<Label class="leading-6" for="rulesAccepted">
+					<span>
 					J'ai lu et j'accepte le
 					<a class="underline underline-offset-4" href={resolve('/rules')}>règlement</a>. Je
 					comprends que les informations publiques seront publiées.
+					</span>
 				</Label>
 			</div>
 			{#if getFieldError('rulesAccepted')}
