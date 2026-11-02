@@ -1,11 +1,13 @@
-import { json } from '@sveltejs/kit';
 import { siteConfig } from '#lib/config/site.js';
 
 export async function GET({ url, fetch }) {
 	const query = url.searchParams.get('q')?.trim() ?? '';
-	if (query.length < 3) return json({ suggestions: [] });
+	if (query.length < 3) return Response.json({ suggestions: [] });
 	if (query.length > 100) {
-		return json({ error: 'La recherche est trop longue.', suggestions: [] }, { status: 400 });
+		return Response.json(
+			{ error: 'La recherche est trop longue.', suggestions: [] },
+			{ status: 400 }
+		);
 	}
 
 	const endpoint = new URL('https://data.geopf.fr/geocodage/search');
@@ -35,9 +37,9 @@ export async function GET({ url, fetch }) {
 					Number.isFinite(suggestion.latitude)
 			);
 
-		return json({ suggestions });
+		return Response.json({ suggestions });
 	} catch {
-		return json(
+		return Response.json(
 			{
 				error: 'Le service de recherche d’adresses est momentanément indisponible.',
 				suggestions: []
