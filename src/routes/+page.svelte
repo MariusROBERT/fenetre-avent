@@ -111,8 +111,8 @@
 			{#each data.days as day (day.date)}
 				<Button
 					type="button"
-					variant="outline"
-					class={`min-h-28 rounded-xl border-2 p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 ${stateClasses[day.state]}`}
+					variant="ghost"
+					class={`min-h-28 rounded-xl border-2 p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:bg-transparent hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 dark:hover:bg-transparent ${stateClasses[day.state]}`}
 					aria-label={`${formatDate(day.date)}, ${stateLabels[day.state]}`}
 					onclick={openDayHandler(day)}
 				>
