@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 const optionalEmail = z.union([
 	z.literal(''),
-	z.string().trim().email('Saisissez une adresse e-mail valide.')
+	z.email('Saisissez une adresse e-mail valide.').trim()
 ]);
 const optionalPhone = z.union([
 	z.literal(''),
@@ -11,7 +11,9 @@ const optionalPhone = z.union([
 		.trim()
 		.regex(/^\+?[0-9\s().-]{6,20}$/, 'Saisissez un numéro de téléphone valide.')
 ]);
-/** @param {number} min @param {number} max */
+/** @param {number} min
+ * @param {number} max
+ */
 const coordinate = (min, max) =>
 	z
 		.string()
