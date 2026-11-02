@@ -89,12 +89,13 @@
 			{#each data.days as day (day.date)}
 				<button
 					type="button"
-					class="min-h-28 rounded-xl border p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 {day.state ===
-					'available'
-						? 'border-emerald-300 bg-emerald-50'
-						: day.state === 'reserved'
-							? 'border-amber-300 bg-amber-50'
-							: 'border-slate-200 bg-slate-100'}"
+					class="min-h-28 rounded-xl border-2 p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+					class:border-green-700={day.state === 'available'}
+					class:bg-green-100={day.state === 'available'}
+					class:border-amber-700={day.state === 'reserved'}
+					class:bg-amber-100={day.state === 'reserved'}
+					class:border-slate-500={day.state === 'past'}
+					class:bg-slate-200={day.state === 'past'}
 					aria-label={`${formatDate(day.date)}, ${stateLabels[day.state]}`}
 					onclick={(event) => openDay(day, event)}
 				>

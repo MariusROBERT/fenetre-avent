@@ -24,6 +24,13 @@
 		siteConfig.municipality.mapCenter[0],
 		siteConfig.municipality.mapCenter[1]
 	]);
+	/** @type {[number, number]} */
+	let mapCenter = $state([
+		siteConfig.municipality.mapCenter[0],
+		siteConfig.municipality.mapCenter[1]
+	]);
+	/** @type {[number, number] | null} */
+	let selectedAddressPosition = $state(null);
 	/** @type {AddressSuggestion[]} */
 	let suggestions = $state([]);
 	let loading = $state(false);
@@ -55,6 +62,7 @@
 	/** @param {Event} event */
 	function handleAddressInput(event) {
 		address = /** @type {HTMLInputElement} */ (event.currentTarget).value;
+		selectedAddressPosition = null;
 		clearTimeout(searchTimer);
 		searchController?.abort();
 		suggestions = [];
@@ -95,10 +103,16 @@
 		clearTimeout(searchTimer);
 		searchController?.abort();
 		address = suggestion.label;
-		markerPosition = [suggestion.longitude, suggestion.latitude];
+		selectedAddressPosition = [suggestion.longitude, suggestion.latitude];
+		markerPosition = selectedAddressPosition;
+		mapCenter = selectedAddressPosition;
 		suggestions = [];
 		searchError = '';
 		loading = false;
+	}
+
+	function recenterOnAddress() {
+		if (selectedAddressPosition) mapCenter = selectedAddressPosition;
 	}
 
 	function updateMarkerFromInputs() {
@@ -123,18 +137,27 @@
 <div class="space-y-4">
 	<div>
 		<label class="mb-1 block font-medium" for="address">Adresse de la fenêtre</label>
-		<input
-			class="w-full rounded-lg border border-slate-300 p-3"
-			id="address"
-			name="address"
-			bind:value={address}
-			autocomplete="street-address"
-			aria-autocomplete="list"
-			aria-controls="address-suggestions"
-			aria-expanded={suggestions.length > 0}
-			oninput={handleAddressInput}
-			required
-		/>
+		<div class="flex gap-2">
+			<input
+				class="min-w-0 flex-1 rounded-lg border border-slate-300 p-3"
+				id="address"
+				name="address"
+				bind:value={address}
+				autocomplete="street-address"
+				aria-autocomplete="list"
+				aria-controls="address-suggestions"
+				aria-expanded={suggestions.length > 0}
+				oninput={handleAddressInput}
+				required
+			/>
+			<button
+				class="min-h-11 shrink-0 rounded-lg border border-slate-300 px-3 text-sm font-medium hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800 disabled:cursor-not-allowed disabled:opacity-50"
+				type="button"
+				aria-label="Recentrer la carte sur l’adresse sélectionnée"
+				disabled={!selectedAddressPosition}
+				onclick={recenterOnAddress}>Recentrer</button
+			>
+		</div>
 		{#if loading}
 			<p class="mt-1 text-sm text-slate-600" aria-live="polite">Recherche d’adresses…</p>
 		{/if}
@@ -173,7 +196,7 @@
 		</p>
 		<div class="h-80 overflow-hidden rounded-lg border border-slate-300">
 			<MapLibre
-				center={siteConfig.municipality.mapCenter}
+				bind:center={mapCenter}
 				zoom={15}
 				minZoom={11}
 				maxZoom={19}
