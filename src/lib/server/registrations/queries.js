@@ -51,3 +51,13 @@ export function getAllConfirmedRegistrations() {
 		.orderBy(asc(registration.date))
 		.all();
 }
+
+/** @param {number} year */
+export function getAdminRegistrations(year) {
+	return db
+		.select()
+		.from(registration)
+		.where(and(gte(registration.date, `${year}-12-01`), lte(registration.date, `${year}-12-24`)))
+		.orderBy(asc(registration.date))
+		.all();
+}

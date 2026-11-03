@@ -8,6 +8,13 @@
       "when": 1793571398033,
       "tag": "0000_rare_cassandra_nova",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1793571398034,
+      "tag": "0001_admin_auth",
+      "breakpoints": true
     }
   ]
 }
