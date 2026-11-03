@@ -32,7 +32,8 @@
 		'address',
 		'latitude',
 		'longitude',
-		'rulesAccepted'
+		'rulesAccepted',
+		'privacyAccepted'
 	];
 
 	let fieldErrors = $derived.by(() => {
@@ -79,6 +80,15 @@
 		if (!formElement) return;
 		const input = registrationInputFromFormData(new FormData(formElement));
 		input.rulesAccepted = checked;
+		updateValidation(input);
+	}
+
+	/** @param {boolean | 'indeterminate'} checked */
+	function validatePrivacyAcceptance(checked) {
+		touchedFields = { ...touchedFields, privacyAccepted: true };
+		if (!formElement) return;
+		const input = registrationInputFromFormData(new FormData(formElement));
+		input.privacyAccepted = checked === true;
 		updateValidation(input);
 	}
 
@@ -279,15 +289,41 @@
 				/>
 				<Label class="leading-6" for="rulesAccepted">
 					<span>
-					J'ai lu et j'accepte le
-					<a class="underline underline-offset-4" href={resolve('/rules')}>règlement</a>. Je
-					comprends que les informations publiques seront publiées.
+						J'ai lu et j'accepte le
+						<a class="underline underline-offset-4" href={resolve('/rules')}>règlement</a>. Je
+						comprends que les informations publiques seront publiées.
 					</span>
 				</Label>
 			</div>
 			{#if getFieldError('rulesAccepted')}
 				<p class="text-sm text-[#F3ADB3]" id="rulesAccepted-error" aria-live="polite">
 					{getFieldError('rulesAccepted')}
+				</p>
+			{/if}
+
+			<div class="flex items-start gap-3">
+				<Checkbox
+					class="mt-1"
+					id="privacyAccepted"
+					name="privacyAccepted"
+					value="on"
+					aria-invalid={Boolean(getFieldError('privacyAccepted'))}
+					aria-describedby={getFieldError('privacyAccepted') ? 'privacyAccepted-error' : undefined}
+					onCheckedChange={validatePrivacyAcceptance}
+					required
+				/>
+				<Label class="leading-6" for="privacyAccepted">
+					<span>
+						J'ai lu et j'accepte la
+						<a class="underline underline-offset-4" href={resolve('/privacy')}
+							>politique de confidentialité</a
+						>.
+					</span>
+				</Label>
+			</div>
+			{#if getFieldError('privacyAccepted')}
+				<p class="text-sm text-[#F3ADB3]" id="privacyAccepted-error" aria-live="polite">
+					{getFieldError('privacyAccepted')}
 				</p>
 			{/if}
 

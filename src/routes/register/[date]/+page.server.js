@@ -65,6 +65,7 @@ export const actions = {
 		}
 
 		const values = parsed.data;
+		const acceptedAt = new Date().toISOString();
 		if (!isInsideMunicipality(values.longitude, values.latitude)) {
 			return fail(400, {
 				success: false,
@@ -89,8 +90,10 @@ export const actions = {
 					latitude: values.latitude,
 					longitude: values.longitude,
 					status: 'confirmed',
-					rulesAcceptedAt: new Date().toISOString(),
-					rulesVersion: siteConfig.rulesVersion
+					rulesAcceptedAt: acceptedAt,
+					rulesVersion: siteConfig.rulesVersion,
+					privacyAcceptedAt: acceptedAt,
+					privacyVersion: siteConfig.privacyVersion
 				})
 				.run();
 		} catch (cause) {

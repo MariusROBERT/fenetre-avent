@@ -22,6 +22,8 @@ test('SQLite requires contact information and prevents active duplicate dates', 
 			longitude: 5.9874,
 			rulesAcceptedAt: '2026-11-01T12:00:00.000Z',
 			rulesVersion: '1',
+			privacyAcceptedAt: '2026-11-01T12:00:00.000Z',
+			privacyVersion: '2026-01',
 			phone: '0600000000'
 		};
 
@@ -35,6 +37,7 @@ test('SQLite requires contact information and prevents active duplicate dates', 
 		);
 
 		const first = db.insert(schema.registration).values(registration).returning().get();
+		assert.equal(first.privacyVersion, '2026-01');
 		assert.throws(
 			() => db.insert(schema.registration).values(registration).run(),
 			/UNIQUE constraint failed/

@@ -18,6 +18,8 @@ export const registration = sqliteTable(
 		status: text('status').notNull().default('confirmed'),
 		rulesAcceptedAt: text('rules_accepted_at').notNull(),
 		rulesVersion: text('rules_version').notNull(),
+		privacyAcceptedAt: text('privacy_accepted_at'),
+		privacyVersion: text('privacy_version'),
 		createdAt: text('created_at')
 			.notNull()
 			.default(sql`CURRENT_TIMESTAMP`),

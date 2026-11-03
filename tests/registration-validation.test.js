@@ -10,7 +10,8 @@ const validRegistration = {
 	address: '1 place de la Mairie',
 	latitude: '45.2571',
 	longitude: '5.9874',
-	rulesAccepted: true
+	rulesAccepted: true,
+	privacyAccepted: true
 };
 
 test('registration accepts either contact method and parses coordinates', () => {
@@ -32,6 +33,10 @@ test('registration requires a valid contact, accepted rules, and in-range coordi
 	assert.equal(registrationSchema.safeParse({ ...validRegistration, phone: '' }).success, false);
 	assert.equal(
 		registrationSchema.safeParse({ ...validRegistration, rulesAccepted: false }).success,
+		false
+	);
+	assert.equal(
+		registrationSchema.safeParse({ ...validRegistration, privacyAccepted: false }).success,
 		false
 	);
 	assert.equal(

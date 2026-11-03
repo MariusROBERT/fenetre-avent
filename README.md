@@ -45,10 +45,11 @@ Configure `ADMIN_EMAIL` (Better Auth's internal account identifier), `ADMIN_USER
 - `/` — public calendar and subscription link
 - `/register/[date]` — no-account registration form
 - `/rules` — event rules
+- `/privacy` — legal and privacy information
 - `/calendar.ics` — stable, read-only, multi-year iCalendar feed
 - `/api/addresses?q=...` — municipality-restricted IGN address suggestions
 
-Participant name, description, address, and map point are public. Email and phone are server-only and omitted from public loads and the iCalendar feed. Registrations are immediately confirmed; SQLite enforces one active registration per date.
+Participant name, description, address, and map point are public. Email and phone are server-only and omitted from public loads and the iCalendar feed. Registration requires acceptance of both the rules and privacy policy; their acceptance timestamps and versions are recorded. Registrations are immediately confirmed; SQLite enforces one active registration per date.
 
 ## Before public launch
 

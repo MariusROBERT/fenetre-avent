@@ -45,7 +45,10 @@ export const registrationSchema = z
 		address: z.string().trim().min(1, 'L\'adresse est obligatoire.'),
 		latitude: coordinate(-90, 90),
 		longitude: coordinate(-180, 180),
-		rulesAccepted: z.boolean().refine(Boolean, 'Vous devez accepter le règlement.')
+		rulesAccepted: z.boolean().refine(Boolean, 'Vous devez accepter le règlement.'),
+		privacyAccepted: z
+			.boolean()
+			.refine(Boolean, 'Vous devez accepter la politique de confidentialité.')
 	})
 	.refine((data) => data.email.length > 0 || data.phone.length > 0, {
 		path: ['email'],
@@ -62,6 +65,7 @@ export function registrationInputFromFormData(formData) {
 		address: formData.get('address'),
 		latitude: formData.get('latitude'),
 		longitude: formData.get('longitude'),
-		rulesAccepted: formData.get('rulesAccepted') === 'on'
+		rulesAccepted: formData.get('rulesAccepted') === 'on',
+		privacyAccepted: formData.get('privacyAccepted') === 'on'
 	};
 }

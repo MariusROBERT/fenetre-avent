@@ -28,7 +28,9 @@
 		rulesAcceptedAt: 'Règlement accepté le',
 		rulesVersion: 'Version du règlement',
 		createdAt: 'Créée le',
-		updatedAt: 'Mise à jour le'
+		updatedAt: 'Mise à jour le',
+		privacyAcceptedAt: 'Politique acceptée le',
+		privacyVersion: 'Version de la politique'
 	};
 	/** @param {string} key */ const labelFor = (key) =>
 		/** @type {Record<string, string>} */ (labels)[key] ?? key;
