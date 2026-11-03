@@ -177,6 +177,12 @@
 		</div>
 		<p class="mt-2 text-sm text-[#455F54]" aria-live="polite">{copyMessage}</p>
 	</section>
+
+	<footer class="mt-8 flex justify-center gap-6 pb-4 text-sm text-[#DAE8D8]">
+		<a class="underline underline-offset-4 hover:text-[#FFF4DB]" href={resolve('/privacy')}
+			>Confidentialité et mentions légales</a
+		>
+	</footer>
 </main>
 
 <Dialog.Root bind:open={dialogOpen}>
