@@ -24,15 +24,9 @@
 	} = $props();
 
 	/** @type {[number, number]} */
-	let markerPosition = $state([
-		siteConfig.municipality.mapCenter[0],
-		siteConfig.municipality.mapCenter[1]
-	]);
+	let markerPosition = $state([longitude, latitude]);
 	/** @type {[number, number]} */
-	let mapCenter = $state([
-		siteConfig.municipality.mapCenter[0],
-		siteConfig.municipality.mapCenter[1]
-	]);
+	let mapCenter = $state([longitude, latitude]);
 	/** @type {AddressSuggestion[]} */
 	let suggestions = $state([]);
 	let loading = $state(false);
@@ -78,7 +72,7 @@
 			suggestions = result.suggestions;
 		} catch (error) {
 			if (!(error instanceof Error) || error.name !== 'AbortError') {
-				searchError = 'La recherche est indisponible. Vous pouvez saisir l\'adresse manuellement.';
+				searchError = "La recherche est indisponible. Vous pouvez saisir l'adresse manuellement.";
 			}
 		} finally {
 			if (searchController === controller) loading = false;

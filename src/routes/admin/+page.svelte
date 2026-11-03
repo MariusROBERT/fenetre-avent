@@ -2,14 +2,14 @@
 	import { invalidateAll } from '$app/navigation';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import { Dialog } from '#lib/components/ui/dialog/index.js';
+	import LocationPicker from '#lib/components/LocationPicker.svelte';
 	import { siteConfig } from '#lib/config/site.js';
 	/** @typedef {NonNullable<import('./$types').PageData['registrations']>[number]} Entry */
 	let { data } = $props();
 	let loginName = $state('');
 	let password = $state('');
-	let errorMessage = $state('');
-	let notice = $state('');
 	let busy = $state(false);
+	/** @type {{message: string, kind: 'success' | 'error'} | null} */ let toast = $state(null);
 	let detailsOpen = $state(false);
 	let selectedDate = $state('');
 	/** @type {Entry | null} */ let editing = $state(null);
@@ -38,9 +38,6 @@
 		'email',
 		'phone',
 		'description',
-		'address',
-		'latitude',
-		'longitude',
 		'status'
 	];
 	/** @param {string} date */ const formatDate = (date) =>
@@ -58,10 +55,13 @@
 		selectedDate = date;
 		detailsOpen = true;
 	}
+	/** @param {string} message @param {'success' | 'error'} kind */ function notify(message, kind) {
+		toast = { message, kind };
+		setTimeout(() => (toast = null), 4000);
+	}
 	/** @param {SubmitEvent} event */ async function login(event) {
 		event.preventDefault();
 		busy = true;
-		errorMessage = '';
 		try {
 			const response = await fetch('/api/admin/login', {
 				method: 'POST',
@@ -71,7 +71,7 @@
 			if (!response.ok) throw new Error();
 			await invalidateAll();
 		} catch {
-			errorMessage = 'Identifiants invalides.';
+			notify('Identifiants invalides.', 'error');
 		} finally {
 			busy = false;
 		}
@@ -83,20 +83,20 @@
 	/** @param {Entry} entry */ function edit(entry) {
 		detailsOpen = false;
 		editing = entry;
-		draft = { ...entry };
-		errorMessage = '';
-		notice = '';
+		draft = { ...entry, email: entry.email ?? '', phone: entry.phone ?? '' };
+		toast = null;
 	}
 	async function save() {
 		if (!draft) return;
 		busy = true;
-		errorMessage = '';
 		try {
 			const response = await fetch('/api/admin/registrations', {
 				method: 'PUT',
 				headers: { 'content-type': 'application/json' },
 				body: JSON.stringify({
 					...draft,
+					email: draft.email ?? '',
+					phone: draft.phone ?? '',
 					latitude: Number(draft.latitude),
 					longitude: Number(draft.longitude)
 				})
@@ -105,10 +105,10 @@
 				throw new Error((await response.json()).message ?? 'Modification impossible.');
 			editing = null;
 			selectedDate = '';
-			notice = 'Modifications enregistrées.';
+			notify('Modifications enregistrées.', 'success');
 			await invalidateAll();
 		} catch (error) {
-			errorMessage = error instanceof Error ? error.message : 'Modification impossible.';
+			notify(error instanceof Error ? error.message : 'Modification impossible.', 'error');
 		} finally {
 			busy = false;
 		}
@@ -116,8 +116,6 @@
 	/** @param {Entry} entry */ async function remove(entry) {
 		if (!confirm(`Supprimer définitivement l'inscription de ${entry.name} ?`)) return;
 		busy = true;
-		errorMessage = '';
-		notice = '';
 		try {
 			const response = await fetch('/api/admin/registrations', {
 				method: 'DELETE',
@@ -125,12 +123,12 @@
 				body: JSON.stringify({ id: entry.id })
 			});
 			if (!response.ok) throw new Error('Suppression impossible.');
-			notice = 'Inscription supprimée.';
+			notify('Inscription supprimée.', 'success');
 			detailsOpen = false;
 			selectedDate = '';
 			await invalidateAll();
 		} catch (error) {
-			errorMessage = error instanceof Error ? error.message : 'Suppression impossible.';
+			notify(error instanceof Error ? error.message : 'Suppression impossible.', 'error');
 		} finally {
 			busy = false;
 		}
@@ -168,7 +166,6 @@
 						autocomplete="current-password"
 					/></label
 				>
-				{#if errorMessage}<p class="text-sm text-red-700" role="alert">{errorMessage}</p>{/if}
 				<Button class="min-h-11 w-full" type="submit" disabled={busy}
 					>{busy ? 'Connexion…' : 'Se connecter'}</Button
 				>
@@ -183,12 +180,6 @@
 			<Button variant="outline" class="min-h-11 text-[#153D33]" onclick={logout}>Déconnexion</Button
 			>
 		</header>
-		{#if notice}<p class="mb-4 rounded bg-emerald-100 p-3 text-emerald-900" role="status">
-				{notice}
-			</p>{/if}
-		{#if errorMessage}<p class="mb-4 rounded bg-red-100 p-3 text-red-900" role="alert">
-				{errorMessage}
-			</p>{/if}
 		<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
 			{#each Array.from({ length: 24 }, (_, i) => `${data.year}-12-${String(i + 1).padStart(2, '0')}`) as date (date)}
 				{@const entry = byDate.get(date)}
@@ -201,14 +192,15 @@
 				<Button
 					variant="ghost"
 					type="button"
-					class={`min-h-28 w-full justify-start rounded-xl border-2 p-4 text-left shadow-md shadow-[#0A2B24]/15 transition hover:-translate-y-0.5 hover:shadow-lg hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D6B56E] dark:hover:brightness-95 ${stateClasses[state]}`}
+					class={`min-h-28 w-full items-center justify-start gap-4 rounded-xl border-2 p-4 text-left shadow-md shadow-[#0A2B24]/15 transition hover:-translate-y-0.5 hover:shadow-lg hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D6B56E] dark:hover:brightness-95 ${stateClasses[state]}`}
 					aria-label={`${formatDate(date)}${entry ? `, ${entry.name}, ${entry.address}` : ''}`}
 					onclick={() => openDay(date)}
 				>
-					<span class="block text-2xl font-bold text-[#153D33]">{Number(date.slice(-2))}</span>
-					{#if entry}<span class="mt-2 block text-sm font-semibold break-words text-[#153D33]"
-							>{entry.name}</span
-						><span class="block text-sm break-words text-[#153D33]">{entry.address}</span>{/if}
+					<span class="shrink-0 text-2xl font-bold text-[#153D33]">{Number(date.slice(-2))}</span>
+					{#if entry}<span class="flex min-w-0 flex-1 flex-col text-left"
+							><span class="text-sm font-semibold break-words text-[#153D33]">{entry.name}</span
+							><span class="text-sm break-words text-[#153D33]">{entry.address}</span></span
+						>{/if}
 				</Button>
 			{/each}
 		</div>
@@ -219,8 +211,12 @@
 	<Dialog.Portal>
 		<Dialog.Overlay class="fixed inset-0 z-40 bg-slate-950/50" />
 		<Dialog.Content
-			class="fixed top-1/2 left-1/2 z-50 max-h-[85vh] w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border border-[#D6B56E]/50 bg-[#FFF9ED] p-6 text-[#153D33] shadow-xl"
+			class="fixed top-1/2 left-1/2 z-50 max-h-[85vh] w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border border-[#D6B56E]/50 bg-[#FFF9ED] p-6 pr-14 text-[#153D33] shadow-xl"
 		>
+			<Dialog.Close
+				class="absolute top-3 right-3 grid size-10 place-items-center rounded-lg hover:bg-[#DAE8D8]"
+				aria-label="Fermer">×</Dialog.Close
+			>
 			<Dialog.Title class="text-xl font-semibold">{formatDate(selectedDate)}</Dialog.Title>
 			{#if selectedEntry}
 				<dl class="mt-5 grid gap-3 sm:grid-cols-2">
@@ -240,10 +236,6 @@
 					>
 				</div>
 			{:else}<p class="mt-4 text-slate-600">Aucune inscription pour cette date.</p>{/if}
-			<Dialog.Close
-				class="ml-2 inline-flex min-h-11 items-center rounded-lg border border-slate-300 px-4 font-medium hover:bg-slate-50"
-				>Fermer</Dialog.Close
-			>
 		</Dialog.Content>
 	</Dialog.Portal>
 </Dialog.Root>
@@ -257,12 +249,18 @@
 		}}
 	>
 		<div
-			class="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-xl bg-[#FFF9ED] p-6 text-[#153D33]"
+			class="relative max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-xl bg-[#FFF9ED] p-6 pr-14 text-[#153D33]"
 			role="dialog"
 			aria-modal="true"
 			aria-labelledby="edit-title"
 			tabindex="-1"
 		>
+			<button
+				type="button"
+				class="absolute top-3 right-3 grid size-10 place-items-center rounded-lg hover:bg-[#DAE8D8]"
+				aria-label="Fermer"
+				onclick={() => (editing = null)}>×</button
+			>
 			<h2 id="edit-title" class="text-xl font-bold">Modifier · {formatDate(editing.date)}</h2>
 			<form
 				class="mt-4 grid gap-3 sm:grid-cols-2"
@@ -273,7 +271,7 @@
 			>
 				{#each fields as field (field)}
 					<label
-						class={`block text-sm font-medium ${field === 'description' || field === 'address' ? 'sm:col-span-2' : ''}`}
+						class={`block text-sm font-medium ${field === 'description' ? 'sm:col-span-2' : ''}`}
 						>{labels[field]}
 						{#if field === 'description'}<textarea
 								class="mt-1 min-h-24 w-full rounded border border-slate-300 bg-white p-2"
@@ -301,11 +299,28 @@
 							/>{/if}
 					</label>
 				{/each}
+				<div class="rounded-lg bg-[#153D33] p-4 sm:col-span-2">
+					<LocationPicker
+						bind:address={draft.address}
+						bind:latitude={draft.latitude}
+						bind:longitude={draft.longitude}
+						errors={{}}
+					/>
+				</div>
 				<div class="flex gap-2 sm:col-span-2">
 					<Button type="submit" disabled={busy}>{busy ? 'Enregistrement…' : 'Enregistrer'}</Button
 					><Button type="button" variant="outline" onclick={() => (editing = null)}>Annuler</Button>
 				</div>
 			</form>
 		</div>
+	</div>
+{/if}
+
+{#if toast}
+	<div
+		class={`fixed right-4 bottom-4 z-[60] max-w-sm rounded-lg px-4 py-3 shadow-lg ${toast.kind === 'error' ? 'bg-red-100 text-red-900' : 'bg-emerald-100 text-emerald-900'}`}
+		role={toast.kind === 'error' ? 'alert' : 'status'}
+	>
+		{toast.message}
 	</div>
 {/if}
