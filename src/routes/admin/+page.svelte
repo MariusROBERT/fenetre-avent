@@ -1,14 +1,17 @@
 <script>
 	import { invalidateAll } from '$app/navigation';
 	import { Button } from '#lib/components/ui/button/index.js';
+	import { Dialog } from '#lib/components/ui/dialog/index.js';
 	import { siteConfig } from '#lib/config/site.js';
 	/** @typedef {NonNullable<import('./$types').PageData['registrations']>[number]} Entry */
 	let { data } = $props();
-	let email = $state('');
+	let loginName = $state('');
 	let password = $state('');
 	let errorMessage = $state('');
 	let notice = $state('');
 	let busy = $state(false);
+	let detailsOpen = $state(false);
+	let selectedDate = $state('');
 	/** @type {Entry | null} */ let editing = $state(null);
 	/** @type {Entry | null} */ let draft = $state(null);
 	const labels = {
@@ -20,8 +23,15 @@
 		address: 'Adresse',
 		latitude: 'Latitude',
 		longitude: 'Longitude',
-		status: 'Statut'
+		status: 'Statut',
+		id: 'Identifiant',
+		rulesAcceptedAt: 'Règlement accepté le',
+		rulesVersion: 'Version du règlement',
+		createdAt: 'Créée le',
+		updatedAt: 'Mise à jour le'
 	};
+	/** @param {string} key */ const labelFor = (key) =>
+		/** @type {Record<string, string>} */ (labels)[key] ?? key;
 	/** @type {(keyof typeof labels)[]} */ const fields = [
 		'date',
 		'name',
@@ -38,15 +48,25 @@
 			new Date(`${date}T12:00:00Z`)
 		);
 	const byDate = $derived(new Map((data.registrations ?? []).map((entry) => [entry.date, entry])));
+	const selectedEntry = $derived(byDate.get(selectedDate) ?? null);
+	const stateClasses = {
+		available: 'border-[#91B99D] bg-[#DAE8D8] hover:bg-[#DAE8D8]',
+		reserved: 'border-[#D6B56E] bg-[#FFF1CC] hover:bg-[#FFF1CC]',
+		past: 'border-[#A5B6AA] bg-[#E6EDE4] hover:bg-[#E6EDE4]'
+	};
+	/** @param {string} date */ function openDay(date) {
+		selectedDate = date;
+		detailsOpen = true;
+	}
 	/** @param {SubmitEvent} event */ async function login(event) {
 		event.preventDefault();
 		busy = true;
 		errorMessage = '';
 		try {
-			const response = await fetch('/api/auth/sign-in/email', {
+			const response = await fetch('/api/admin/login', {
 				method: 'POST',
 				headers: { 'content-type': 'application/json' },
-				body: JSON.stringify({ email, password })
+				body: JSON.stringify({ login: loginName, password })
 			});
 			if (!response.ok) throw new Error();
 			await invalidateAll();
@@ -61,6 +81,7 @@
 		await invalidateAll();
 	}
 	/** @param {Entry} entry */ function edit(entry) {
+		detailsOpen = false;
 		editing = entry;
 		draft = { ...entry };
 		errorMessage = '';
@@ -83,6 +104,7 @@
 			if (!response.ok)
 				throw new Error((await response.json()).message ?? 'Modification impossible.');
 			editing = null;
+			selectedDate = '';
 			notice = 'Modifications enregistrées.';
 			await invalidateAll();
 		} catch (error) {
@@ -104,6 +126,8 @@
 			});
 			if (!response.ok) throw new Error('Suppression impossible.');
 			notice = 'Inscription supprimée.';
+			detailsOpen = false;
+			selectedDate = '';
 			await invalidateAll();
 		} catch (error) {
 			errorMessage = error instanceof Error ? error.message : 'Suppression impossible.';
@@ -127,10 +151,10 @@
 			<p class="mt-2 text-slate-600">Connectez-vous pour gérer le calendrier.</p>
 			<form class="mt-6 space-y-4" onsubmit={login}>
 				<label class="block text-sm font-medium"
-					>E-mail<input
+					>Identifiant<input
 						class="mt-1 block min-h-11 w-full rounded border border-slate-300 bg-white px-3"
-						type="email"
-						bind:value={email}
+						type="text"
+						bind:value={loginName}
 						required
 						autocomplete="username"
 					/></label
@@ -168,30 +192,61 @@
 		<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
 			{#each Array.from({ length: 24 }, (_, i) => `${data.year}-12-${String(i + 1).padStart(2, '0')}`) as date (date)}
 				{@const entry = byDate.get(date)}
-				<article
-					class="rounded-xl border border-[#D6B56E]/50 bg-[#FFF9ED] p-4 text-[#153D33] shadow-md"
+				{@const state =
+					entry && entry.status !== 'cancelled'
+						? 'reserved'
+						: data.availableDates?.includes(date)
+							? 'available'
+							: 'past'}
+				<Button
+					variant="ghost"
+					type="button"
+					class={`min-h-28 w-full justify-start rounded-xl border-2 p-4 text-left shadow-md shadow-[#0A2B24]/15 transition hover:-translate-y-0.5 hover:shadow-lg hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D6B56E] dark:hover:brightness-95 ${stateClasses[state]}`}
+					aria-label={`${formatDate(date)}${entry ? `, ${entry.name}, ${entry.address}` : ''}`}
+					onclick={() => openDay(date)}
 				>
-					<h2 class="text-lg font-bold">{formatDate(date)}</h2>
-					{#if entry}
-						<dl class="mt-3 space-y-2 text-sm">
-							{#each Object.entries(entry) as [key, value] (key)}<div>
-									<dt class="font-semibold">{key}</dt>
-									<dd class="break-words">{value ?? '—'}</dd>
-								</div>{/each}
-						</dl>
-						<div class="mt-4 flex gap-2">
-							<Button class="min-h-10" onclick={() => edit(entry)}>Modifier</Button><Button
-								variant="outline"
-								class="min-h-10 text-red-800"
-								onclick={() => remove(entry)}>Supprimer</Button
-							>
-						</div>
-					{:else}<p class="mt-3 text-sm text-slate-600">Aucune inscription</p>{/if}
-				</article>
+					<span class="block text-2xl font-bold text-[#153D33]">{Number(date.slice(-2))}</span>
+					{#if entry}<span class="mt-2 block text-sm font-semibold break-words text-[#153D33]"
+							>{entry.name}</span
+						><span class="block text-sm break-words text-[#153D33]">{entry.address}</span>{/if}
+				</Button>
 			{/each}
 		</div>
 	{/if}
 </main>
+
+<Dialog.Root bind:open={detailsOpen}>
+	<Dialog.Portal>
+		<Dialog.Overlay class="fixed inset-0 z-40 bg-slate-950/50" />
+		<Dialog.Content
+			class="fixed top-1/2 left-1/2 z-50 max-h-[85vh] w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border border-[#D6B56E]/50 bg-[#FFF9ED] p-6 text-[#153D33] shadow-xl"
+		>
+			<Dialog.Title class="text-xl font-semibold">{formatDate(selectedDate)}</Dialog.Title>
+			{#if selectedEntry}
+				<dl class="mt-5 grid gap-3 sm:grid-cols-2">
+					{#each Object.entries(selectedEntry) as [key, value] (key)}
+						<div class="min-w-0">
+							<dt class="text-sm font-semibold text-slate-600">{labelFor(key)}</dt>
+							<dd class="break-words whitespace-pre-wrap">{value ?? '—'}</dd>
+						</div>
+					{/each}
+				</dl>
+				<div class="mt-6 flex flex-wrap gap-2">
+					<Button class="min-h-11" onclick={() => edit(selectedEntry)}>Modifier</Button>
+					<Button
+						variant="outline"
+						class="min-h-11 text-red-800"
+						onclick={() => remove(selectedEntry)}>Supprimer</Button
+					>
+				</div>
+			{:else}<p class="mt-4 text-slate-600">Aucune inscription pour cette date.</p>{/if}
+			<Dialog.Close
+				class="ml-2 inline-flex min-h-11 items-center rounded-lg border border-slate-300 px-4 font-medium hover:bg-slate-50"
+				>Fermer</Dialog.Close
+			>
+		</Dialog.Content>
+	</Dialog.Portal>
+</Dialog.Root>
 
 {#if editing && draft}
 	<div
