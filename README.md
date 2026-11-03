@@ -38,7 +38,7 @@ The participant rules live in `src/lib/content/rules.md`. Increment `rulesVersio
 
 ## Administration
 
-Configure `ADMIN_EMAIL`, a strong `ADMIN_PASSWORD`, and a unique `BETTER_AUTH_SECRET` (generate one with `openssl rand -base64 32`) in the server environment. Apply database migrations with `npm run db:migrate`, then open `/admin` directly. The configured admin account is initialized on first access; public account creation is disabled. Keep these values private and use HTTPS in production. The admin dashboard is not linked from the public site.
+Configure `ADMIN_EMAIL` (Better Auth's internal account identifier), `ADMIN_USERNAME` (the login shown on `/admin`), a strong `ADMIN_PASSWORD`, and a unique `BETTER_AUTH_SECRET` (generate one with `openssl rand -base64 32`) in the server environment. Apply database migrations with `npm run db:migrate`, then open `/admin` directly. The configured admin account is initialized on first access; public account creation is disabled. Keep these values private and use HTTPS in production. The admin dashboard is not linked from the public site.
 
 ## Routes
 

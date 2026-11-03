@@ -17,6 +17,10 @@ export const variables = defineEnvVars({
 		description: 'Email address of the single administrator.',
 		schema: (value) => value
 	},
+	ADMIN_USERNAME: {
+		description: 'Login name of the single administrator.',
+		schema: (value) => value
+	},
 	ADMIN_PASSWORD: {
 		description: 'Password for the administrator account.',
 		schema: (value) => value
