@@ -6,17 +6,21 @@ import { db } from '#lib/server/db/index.js';
 import { registration } from '#lib/server/db/schema.js';
 import { requireAdmin } from '#lib/server/admin.js';
 
-const entrySchema = z.object({
-	date: z.string().regex(/^\d{4}-12-(0[1-9]|1\d|2[0-4])$/),
-	name: z.string().trim().min(2).max(100),
-	email: z.union([z.literal(''), z.email()]),
-	phone: z.string().trim().max(30),
-	description: z.string().trim().min(5).max(1000),
-	address: z.string().trim().min(1).max(500),
-	latitude: z.number().finite().min(-90).max(90),
-	longitude: z.number().finite().min(-180).max(180),
-	status: z.enum(['pending', 'confirmed', 'cancelled'])
-});
+const entrySchema = z
+	.object({
+		date: z.string().regex(/^\d{4}-12-(0[1-9]|1\d|2[0-4])$/),
+		name: z.string().trim().min(2).max(100),
+		email: z.union([z.literal(''), z.email()]),
+		phone: z.string().trim().max(30),
+		description: z.string().trim().min(5).max(1000),
+		address: z.string().trim().min(1).max(500),
+		latitude: z.number().finite().min(-90).max(90),
+		longitude: z.number().finite().min(-180).max(180),
+		status: z.enum(['pending', 'confirmed', 'cancelled'])
+	})
+	.refine((entry) => entry.email.length > 0 || entry.phone.length > 0, {
+		message: 'At least one contact method is required'
+	});
 
 /** @param {import('@sveltejs/kit').RequestEvent} event */
 async function authorize(event) {
