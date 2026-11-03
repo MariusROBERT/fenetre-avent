@@ -19,11 +19,17 @@ export const auth = betterAuth({
 	advanced: { useSecureCookies: ORIGIN.startsWith('https://') }
 });
 
+export function assertAuthConfigured() {
+	if (!adminEmail || !adminPassword || authSecret.length < 32 || !BETTER_AUTH_SECRET) {
+		throw new Error(
+			'Configure ADMIN_EMAIL, ADMIN_PASSWORD and a BETTER_AUTH_SECRET of at least 32 characters'
+		);
+	}
+}
+
 /** Create the configured account once. Public registration is disabled above. */
 export async function initializeAdmin() {
-	if (!adminEmail || !adminPassword || !BETTER_AUTH_SECRET) {
-		throw new Error('ADMIN_EMAIL, ADMIN_PASSWORD and BETTER_AUTH_SECRET must be configured');
-	}
+	assertAuthConfigured();
 	if (db.select().from(user).where(eq(user.email, adminEmail)).get()) return;
 	try {
 		await auth.api.signUpEmail({
