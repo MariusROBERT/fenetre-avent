@@ -22,6 +22,8 @@ test('feed includes all years, stable IDs, all-day boundaries, and no contacts',
 			name: 'Famille Martin',
 			description: 'Une fenêtre, décorée',
 			address: '1 rue du Village',
+			latitude: 45.2571,
+			longitude: 5.9874,
 			updatedAt: '2024-12-20 10:30:00',
 			email: 'private@example.com',
 			phone: '0600000000'
@@ -32,6 +34,8 @@ test('feed includes all years, stable IDs, all-day boundaries, and no contacts',
 			name: 'Association',
 			description: 'Décorations',
 			address: '2 place de la Mairie',
+			latitude: 45.271,
+			longitude: 5.964,
 			updatedAt: '2026-11-20T10:30:00.000Z'
 		}
 	]);
@@ -43,6 +47,7 @@ test('feed includes all years, stable IDs, all-day boundaries, and no contacts',
 	assert.match(feed, /SUMMARY:Fenêtre de l'Avent — Famille Martin/);
 	assert.match(feed, /DTSTAMP:20241220T103000Z/);
 	assert.match(feed, /LAST-MODIFIED:20261120T103000Z/);
+	assert.match(feed, /GEO:45\.2571;5\.9874/);
 	assert.doesNotMatch(feed, /private@example.com|0600000000/);
 	assert(feed.endsWith('\r\n'));
 });

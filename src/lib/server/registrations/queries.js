@@ -44,6 +44,8 @@ export function getAllConfirmedRegistrations() {
 			name: registration.name,
 			description: registration.description,
 			address: registration.address,
+			latitude: registration.latitude,
+			longitude: registration.longitude,
 			updatedAt: registration.updatedAt
 		})
 		.from(registration)

@@ -50,7 +50,7 @@ function nextDay(date) {
 	return parsedDate.toISOString().slice(0, 10).replaceAll('-', '');
 }
 
-/** @param {Array<{id: string, date: string, name: string, description: string, address: string, updatedAt: string}>} registrations
+/** @param {Array<{id: string, date: string, name: string, description: string, address: string, latitude: number, longitude: number, updatedAt: string}>} registrations
  * @param {string} [publicUrl]
  */
 export function generateIcalendar(registrations, publicUrl = siteConfig.publicUrl) {
@@ -77,6 +77,7 @@ export function generateIcalendar(registrations, publicUrl = siteConfig.publicUr
 			`SUMMARY:${escapeIcalText(`Fenêtre de l'Avent — ${registration.name}`)}`,
 			`DESCRIPTION:${escapeIcalText(`${registration.description}\nAdresse : ${registration.address}`)}`,
 			`LOCATION:${escapeIcalText(registration.address)}`,
+			`GEO:${registration.latitude};${registration.longitude}`,
 			`URL:${eventUrl}`,
 			'STATUS:CONFIRMED',
 			'END:VEVENT'
