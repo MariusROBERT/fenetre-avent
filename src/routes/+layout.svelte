@@ -9,6 +9,7 @@
 
 <svelte:head>
 	<title>{siteConfig.name}</title>
+	<meta name="robots" content="noindex, nofollow, noarchive" />
 	<link rel="icon" href="/favicon.png" type="image/png" />
 </svelte:head>
 
