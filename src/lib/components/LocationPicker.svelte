@@ -191,14 +191,13 @@
 				minZoom={11}
 				maxZoom={19}
 				maxBounds={siteConfig.municipality.mapBounds}
-				cooperativeGestures
 				standardControls
 				style={siteConfig.mapStyle}
 				class="h-full w-full"
 			>
 				<Marker bind:lngLat={markerPosition} draggable>
 					<span
-						class="grid size-8 place-items-center rounded-full border-2 border-white bg-emerald-800 text-lg text-white shadow-md"
+						class="grid size-8 touch-none place-items-center rounded-full border-2 border-white bg-emerald-800 text-lg text-white shadow-md"
 					>
 						<span aria-hidden="true">●</span>
 					</span>
