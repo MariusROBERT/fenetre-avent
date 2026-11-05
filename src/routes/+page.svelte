@@ -258,7 +258,7 @@
 				{/if}
 
 				<Dialog.Close
-					class="ml-3 inline-flex min-h-11 items-center rounded-lg border border-slate-300 px-4 font-medium hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
+					class="mt-3 inline-flex min-h-11 items-center rounded-lg border border-slate-300 px-4 font-medium hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
 				>
 					Fermer
 				</Dialog.Close>
