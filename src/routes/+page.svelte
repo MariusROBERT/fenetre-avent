@@ -237,11 +237,12 @@
 								</Marker>
 							</MapLibre>
 						</div>
-						<a
-							class="text-sm underline underline-offset-4"
-							href={`https://www.openstreetmap.org/?mlat=${selectedDay.registration.latitude}&mlon=${selectedDay.registration.longitude}#map=17/${selectedDay.registration.latitude}/${selectedDay.registration.longitude}`}
+						<Button
+							variant="outline"
+							class="min-h-11 rounded-lg border-slate-300 text-slate-700 text-[#FFF4DB]"
+							href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${selectedDay.registration.latitude},${selectedDay.registration.longitude}`)}`}
 							target="_blank"
-							rel="noreferrer">Ouvrir la carte dans OpenStreetMap</a
+							rel="noopener noreferrer">Ouvrir dans Google Maps</Button
 						>
 					</div>
 				{:else if selectedDay.state === 'available'}
